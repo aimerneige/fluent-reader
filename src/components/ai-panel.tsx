@@ -158,8 +158,8 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                 borderRadius: 8,
                 backgroundColor:
                     message.role === "user"
-                        ? "var(--neutralLighter)"
-                        : "var(--themeLighterAlt)",
+                        ? "var(--neutralLight)"
+                        : "var(--neutralLighter)",
                 alignSelf: message.role === "user" ? "flex-end" : "flex-start",
                 maxWidth: "85%",
             }}>
@@ -185,11 +185,12 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                     top: 36,
                     bottom: 0,
                     width: 360,
-                    backgroundColor: "var(--background)",
+                    backgroundColor: "var(--white)",
                     borderLeft: "1px solid var(--neutralLight)",
                     display: "flex",
                     flexDirection: "column",
                     zIndex: 100,
+                    boxShadow: "-5px 0 20px rgba(0,0,0,0.15)",
                 }}>
                 {/* Header */}
                 <Stack
@@ -261,7 +262,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                     {this.state.messages.length === 0 && (
                         <div
                             style={{
-                                color: "var(--neutralSecondary)",
+                                color: "var(--neutralTertiary)",
                                 textAlign: "center",
                                 marginTop: 20,
                             }}>

@@ -244,6 +244,7 @@
         "provider": "Provider",
         "openai": "OpenAI",
         "ollama": "Ollama",
+        "deepseek": "DeepSeek",
         "baseUrl": "Base URL",
         "apiKey": "API Key",
         "model": "Model",

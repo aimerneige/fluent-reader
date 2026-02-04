@@ -236,5 +236,26 @@
         "pacHint": "对于Socks代理建议PAC返回“SOCKS5”以启用代理端解析。关闭代理需重启应用后生效。",
         "fetchInterval": "自动抓取频率",
         "never": "从不"
+    },
+    "ai": {
+        "name": "AI 助手",
+        "provider": "服务商",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "API 地址",
+        "apiKey": "API 密钥",
+        "model": "模型",
+        "prompts": "预设提示词",
+        "promptName": "提示词名称",
+        "promptContent": "提示词内容",
+        "addPrompt": "添加提示词",
+        "deletePrompt": "删除",
+        "askAI": "询问 AI",
+        "send": "发送",
+        "thinking": "思考中...",
+        "error": "获取 AI 响应失败",
+        "noConfig": "请先配置 AI 设置",
+        "inputPlaceholder": "询问关于这篇文章的问题..."
     }
 }

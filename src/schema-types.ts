@@ -81,6 +81,7 @@ export interface AIPrompt {
 export const enum AIProvider {
     OpenAI,
     Ollama,
+    DeepSeek,
 }
 
 export interface AIConfig {

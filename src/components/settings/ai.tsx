@@ -41,6 +41,7 @@ class AITab extends React.Component<{}, AITabState> {
     providerOptions = (): IDropdownOption[] => [
         { key: AIProvider.OpenAI, text: intl.get("ai.openai") },
         { key: AIProvider.Ollama, text: intl.get("ai.ollama") },
+        { key: AIProvider.DeepSeek, text: intl.get("ai.deepseek") },
     ]
 
     onProviderChange = (_: any, option: IDropdownOption) => {
@@ -55,6 +56,9 @@ class AITab extends React.Component<{}, AITabState> {
         } else if (provider === AIProvider.OpenAI) {
             baseUrl = "https://api.openai.com/v1"
             model = "gpt-3.5-turbo"
+        } else if (provider === AIProvider.DeepSeek) {
+            baseUrl = "https://api.deepseek.com"
+            model = "deepseek-chat"
         }
 
         this.setState(
@@ -183,22 +187,23 @@ class AITab extends React.Component<{}, AITabState> {
                 </Stack.Item>
             </Stack>
 
-            {this.state.config.provider === AIProvider.OpenAI && (
-                <>
-                    <Label>{intl.get("ai.apiKey")}</Label>
-                    <Stack horizontal>
-                        <Stack.Item grow>
-                            <TextField
-                                type="password"
-                                value={this.state.config.apiKey}
-                                onChange={this.onApiKeyChange}
-                                onBlur={this.onBlur}
-                                placeholder="sk-..."
-                            />
-                        </Stack.Item>
-                    </Stack>
-                </>
-            )}
+            {(this.state.config.provider === AIProvider.OpenAI ||
+                this.state.config.provider === AIProvider.DeepSeek) && (
+                    <>
+                        <Label>{intl.get("ai.apiKey")}</Label>
+                        <Stack horizontal>
+                            <Stack.Item grow>
+                                <TextField
+                                    type="password"
+                                    value={this.state.config.apiKey}
+                                    onChange={this.onApiKeyChange}
+                                    onBlur={this.onBlur}
+                                    placeholder="sk-..."
+                                />
+                            </Stack.Item>
+                        </Stack>
+                    </>
+                )}
 
             <Label>{intl.get("ai.model")}</Label>
             <Stack horizontal>
@@ -210,7 +215,10 @@ class AITab extends React.Component<{}, AITabState> {
                         placeholder={
                             this.state.config.provider === AIProvider.Ollama
                                 ? "llama3.2"
-                                : "gpt-3.5-turbo"
+                                : this.state.config.provider ===
+                                    AIProvider.DeepSeek
+                                    ? "deepseek-chat"
+                                    : "gpt-3.5-turbo"
                         }
                     />
                 </Stack.Item>

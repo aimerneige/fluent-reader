@@ -24,7 +24,12 @@ export function isAIConfigured(): boolean {
     const config = getAIConfig()
     if (!config) return false
     if (!config.baseUrl || !config.model) return false
-    if (config.provider === AIProvider.OpenAI && !config.apiKey) return false
+    if (
+        (config.provider === AIProvider.OpenAI ||
+            config.provider === AIProvider.DeepSeek) &&
+        !config.apiKey
+    )
+        return false
     return true
 }
 
@@ -36,7 +41,7 @@ function getEndpointUrl(config: AIConfig): string {
     if (config.provider === AIProvider.Ollama) {
         return `${baseUrl}/api/chat`
     }
-    // OpenAI-compatible endpoint
+    // OpenAI-compatible endpoint (OpenAI & DeepSeek)
     return `${baseUrl}/chat/completions`
 }
 
@@ -55,7 +60,7 @@ function buildRequestBody(
             stream: stream,
         }
     }
-    // OpenAI format
+    // OpenAI-compatible format (OpenAI & DeepSeek)
     return {
         model: config.model,
         messages: messages,
@@ -70,7 +75,11 @@ function buildHeaders(config: AIConfig): HeadersInit {
     const headers: HeadersInit = {
         "Content-Type": "application/json",
     }
-    if (config.provider === AIProvider.OpenAI && config.apiKey) {
+    if (
+        (config.provider === AIProvider.OpenAI ||
+            config.provider === AIProvider.DeepSeek) &&
+        config.apiKey
+    ) {
         headers["Authorization"] = `Bearer ${config.apiKey}`
     }
     return headers
@@ -117,7 +126,7 @@ export async function sendChatMessage(
             }
         }
 
-        // OpenAI format
+        // OpenAI-compatible format (OpenAI & DeepSeek)
         return {
             content: data.choices?.[0]?.message?.content || "No response",
         }

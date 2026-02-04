@@ -3,6 +3,7 @@ import intl from "react-intl-universal"
 import { Icon } from "@fluentui/react/lib/Icon"
 import { AnimationClassNames } from "@fluentui/react/lib/Styling"
 import AboutTab from "./settings/about"
+import AITab from "./settings/ai"
 import { Pivot, PivotItem, Spinner, FocusTrapZone } from "@fluentui/react"
 import SourcesTabContainer from "../containers/settings/sources-container"
 import GroupsTabContainer from "../containers/settings/groups-container"
@@ -95,6 +96,11 @@ class Settings extends React.Component<SettingsProps> {
                             headerText={intl.get("settings.app")}
                             itemIcon="Settings">
                             <AppTabContainer />
+                        </PivotItem>
+                        <PivotItem
+                            headerText={intl.get("ai.name")}
+                            itemIcon="Robot">
+                            <AITab />
                         </PivotItem>
                         <PivotItem
                             headerText={intl.get("settings.about")}

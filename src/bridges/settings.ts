@@ -5,6 +5,7 @@ import {
     SearchEngines,
     ServiceConfigs,
     ViewConfigs,
+    AIConfig,
 } from "../schema-types"
 import { ipcRenderer } from "electron"
 
@@ -130,6 +131,13 @@ const settingsBridge = {
 
     setAll: configs => {
         ipcRenderer.invoke("import-all-settings", configs)
+    },
+
+    getAIConfig: (): AIConfig | null => {
+        return ipcRenderer.sendSync("get-ai-config")
+    },
+    setAIConfig: (config: AIConfig) => {
+        ipcRenderer.invoke("set-ai-config", config)
     },
 }
 

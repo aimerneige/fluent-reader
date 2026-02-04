@@ -8,6 +8,7 @@ import {
     SyncService,
     ServiceConfigs,
     ViewConfigs,
+    AIConfig,
 } from "../schema-types"
 import { ipcMain, session, nativeTheme, app } from "electron"
 import { WindowManager } from "./window"
@@ -203,4 +204,12 @@ ipcMain.on("get-nedb-status", event => {
 })
 ipcMain.handle("set-nedb-status", (_, flag: boolean) => {
     store.set(NEDB_STATUS_STORE_KEY, flag)
+})
+
+const AI_CONFIG_STORE_KEY = "aiConfig"
+ipcMain.on("get-ai-config", event => {
+    event.returnValue = store.get(AI_CONFIG_STORE_KEY, null)
+})
+ipcMain.handle("set-ai-config", (_, config: AIConfig) => {
+    store.set(AI_CONFIG_STORE_KEY, config)
 })

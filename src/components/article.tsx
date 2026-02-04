@@ -19,6 +19,7 @@ import {
 } from "../scripts/models/source"
 import { shareSubmenu } from "./context-menu"
 import { platformCtrl, decodeFetchResponse } from "../scripts/utils"
+import AIPanel from "./ai-panel"
 
 const FONT_SIZE_OPTIONS = [12, 13, 14, 15, 16, 17, 18, 19, 20]
 
@@ -50,6 +51,7 @@ type ArticleState = {
     loaded: boolean
     error: boolean
     errorDescription: string
+    showAIPanel: boolean
 }
 
 class Article extends React.Component<ArticleProps, ArticleState> {
@@ -66,6 +68,7 @@ class Article extends React.Component<ArticleProps, ArticleState> {
             loaded: false,
             error: false,
             errorDescription: "",
+            showAIPanel: false,
         }
         window.utils.addWebviewContextListener(this.contextMenuHandler)
         window.utils.addWebviewKeydownListener(this.keyDownHandler)
@@ -369,9 +372,8 @@ class Article extends React.Component<ArticleProps, ArticleState> {
         )
         return `article/article.html?a=${a}&h=${h}&f=${encodeURIComponent(
             this.state.fontFamily
-        )}&s=${this.state.fontSize}&d=${this.props.source.textDir}&u=${
-            this.props.item.link
-        }&m=${this.state.loadFull ? 1 : 0}`
+        )}&s=${this.state.fontSize}&d=${this.props.source.textDir}&u=${this.props.item.link
+            }&m=${this.state.loadFull ? 1 : 0}`
     }
 
     render = () => (
@@ -413,12 +415,12 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                             this.props.item.hasRead
                                 ? { iconName: "StatusCircleRing" }
                                 : {
-                                      iconName: "RadioBtnOn",
-                                      style: {
-                                          fontSize: 14,
-                                          textAlign: "center",
-                                      },
-                                  }
+                                    iconName: "RadioBtnOn",
+                                    style: {
+                                        fontSize: 14,
+                                        textAlign: "center",
+                                    },
+                                }
                         }
                         onClick={() =>
                             this.props.toggleHasRead(this.props.item)
@@ -451,6 +453,18 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                         iconProps={{ iconName: "Globe" }}
                         onClick={this.toggleWebpage}
                     />
+                    {!this.state.loadWebpage && (
+                        <CommandBarButton
+                            title={intl.get("ai.askAI")}
+                            className={this.state.showAIPanel ? "active" : ""}
+                            iconProps={{ iconName: "Robot" }}
+                            onClick={() =>
+                                this.setState({
+                                    showAIPanel: !this.state.showAIPanel,
+                                })
+                            }
+                        />
+                    )}
                     <CommandBarButton
                         title={intl.get("more")}
                         iconProps={{ iconName: "More" }}
@@ -507,6 +521,13 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                         {this.state.errorDescription}
                     </span>
                 </Stack>
+            )}
+            {this.state.showAIPanel && !this.state.loadWebpage && (
+                <AIPanel
+                    articleTitle={this.props.item.title}
+                    articleContent={this.state.loadFull ? this.state.fullContent : this.props.item.content}
+                    onClose={() => this.setState({ showAIPanel: false })}
+                />
             )}
         </FocusZone>
     )

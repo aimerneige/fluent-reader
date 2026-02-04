@@ -238,5 +238,25 @@
         "pacHint": "For Socks proxies, it is recommended for PAC to return \"SOCKS5\" for proxy-side DNS. Turning off proxy requires restart.",
         "fetchInterval": "Automatic fetch interval",
         "never": "Never"
+    },
+    "ai": {
+        "name": "AI Assistant",
+        "provider": "Provider",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "model": "Model",
+        "prompts": "Preset Prompts",
+        "promptName": "Prompt Name",
+        "promptContent": "Prompt Content",
+        "addPrompt": "Add Prompt",
+        "deletePrompt": "Delete",
+        "askAI": "Ask AI",
+        "send": "Send",
+        "thinking": "Thinking...",
+        "error": "Failed to get AI response.",
+        "noConfig": "Please configure AI settings first.",
+        "inputPlaceholder": "Ask a question about this article..."
     }
 }

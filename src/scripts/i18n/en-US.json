@@ -255,6 +255,7 @@
         "deletePrompt": "Delete",
         "askAI": "Ask AI",
         "send": "Send",
+        "stop": "Stop",
         "thinking": "Thinking...",
         "error": "Failed to get AI response.",
         "noConfig": "Please configure AI settings first.",

@@ -253,6 +253,7 @@
         "deletePrompt": "删除",
         "askAI": "询问 AI",
         "send": "发送",
+        "stop": "停止",
         "thinking": "思考中...",
         "error": "获取 AI 响应失败",
         "noConfig": "请先配置 AI 设置",

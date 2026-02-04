@@ -9,6 +9,7 @@ import {
     Spinner,
     MessageBar,
     MessageBarType,
+    IButtonStyles,
 } from "@fluentui/react"
 import { AnimationClassNames } from "@fluentui/react/lib/Styling"
 import {
@@ -35,6 +36,7 @@ type AIPanelState = {
     input: string
     loading: boolean
     error: string | null
+    abortController: AbortController | null
 }
 
 class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
@@ -47,6 +49,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             input: "",
             loading: false,
             error: null,
+            abortController: null,
         }
         this.messagesEndRef = React.createRef()
     }
@@ -119,6 +122,10 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             ],
         })
 
+        // Create AbortController for cancellation
+        const abortController = new AbortController()
+        this.setState({ abortController })
+
         sendChatMessageStreaming(
             chatMessages,
             chunk => {
@@ -136,12 +143,24 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                 this.setState({
                     loading: false,
                     error: error,
+                    abortController: null,
                 })
             },
             () => {
-                this.setState({ loading: false })
-            }
+                this.setState({ loading: false, abortController: null })
+            },
+            abortController.signal
         )
+    }
+
+    stopGeneration = () => {
+        if (this.state.abortController) {
+            this.state.abortController.abort()
+            this.setState({
+                loading: false,
+                abortController: null,
+            })
+        }
     }
 
     handlePresetPrompt = (prompt: string) => {
@@ -296,13 +315,32 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                         />
                     </Stack.Item>
                     <Stack.Item>
-                        <PrimaryButton
-                            text={intl.get("ai.send")}
-                            onClick={() => this.sendMessage()}
-                            disabled={
-                                !this.state.input.trim() || this.state.loading
-                            }
-                        />
+                        {this.state.loading ? (
+                            <PrimaryButton
+                                text={intl.get("ai.stop")}
+                                onClick={this.stopGeneration}
+                                styles={{
+                                    root: {
+                                        backgroundColor: "#d32f2f",
+                                        borderColor: "#d32f2f",
+                                    },
+                                    rootHovered: {
+                                        backgroundColor: "#b71c1c",
+                                        borderColor: "#b71c1c",
+                                    },
+                                    rootPressed: {
+                                        backgroundColor: "#c62828",
+                                        borderColor: "#c62828",
+                                    },
+                                } as IButtonStyles}
+                            />
+                        ) : (
+                            <PrimaryButton
+                                text={intl.get("ai.send")}
+                                onClick={() => this.sendMessage()}
+                                disabled={!this.state.input.trim()}
+                            />
+                        )}
                     </Stack.Item>
                 </Stack>
             </div>

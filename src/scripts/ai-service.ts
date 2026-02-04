@@ -141,12 +141,14 @@ export async function sendChatMessage(
 /**
  * Send a chat message with streaming support.
  * Calls onChunk for each received chunk.
+ * @param signal - Optional AbortSignal for cancellation
  */
 export async function sendChatMessageStreaming(
     messages: ChatMessage[],
     onChunk: (chunk: string) => void,
     onError: (error: string) => void,
-    onComplete: () => void
+    onComplete: () => void,
+    signal?: AbortSignal
 ): Promise<void> {
     const config = getAIConfig()
     if (!config) {
@@ -163,6 +165,7 @@ export async function sendChatMessageStreaming(
             method: "POST",
             headers: headers,
             body: JSON.stringify(body),
+            signal: signal,
         })
 
         if (!response.ok) {
@@ -219,6 +222,11 @@ export async function sendChatMessageStreaming(
 
         onComplete()
     } catch (error) {
+        // Handle user cancellation gracefully
+        if (error instanceof Error && error.name === "AbortError") {
+            onComplete()
+            return
+        }
         onError(
             `Request failed: ${error instanceof Error ? error.message : String(error)}`
         )

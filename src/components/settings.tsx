@@ -99,7 +99,7 @@ class Settings extends React.Component<SettingsProps> {
                         </PivotItem>
                         <PivotItem
                             headerText={intl.get("ai.name")}
-                            itemIcon="Robot">
+                            itemIcon="Chat">
                             <AITab />
                         </PivotItem>
                         <PivotItem

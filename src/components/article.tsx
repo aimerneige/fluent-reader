@@ -457,7 +457,7 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                         <CommandBarButton
                             title={intl.get("ai.askAI")}
                             className={this.state.showAIPanel ? "active" : ""}
-                            iconProps={{ iconName: "Robot" }}
+                            iconProps={{ iconName: "Chat" }}
                             onClick={() =>
                                 this.setState({
                                     showAIPanel: !this.state.showAIPanel,

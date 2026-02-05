@@ -29,6 +29,7 @@ type AIPanelProps = {
     articleTitle: string
     articleContent: string
     onClose: () => void
+    width: number
 }
 
 type AIPanelState = {
@@ -199,16 +200,12 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             <div
                 className={`ai-panel ${AnimationClassNames.slideRightIn20}`}
                 style={{
-                    position: "absolute",
-                    right: 0,
-                    top: 36,
-                    bottom: 0,
-                    width: 360,
+                    width: this.props.width,
+                    height: "100%",
                     backgroundColor: "var(--white)",
                     borderLeft: "1px solid var(--neutralLight)",
                     display: "flex",
                     flexDirection: "column",
-                    zIndex: 100,
                     boxShadow: "-5px 0 20px rgba(0,0,0,0.15)",
                 }}>
                 {/* Header */}

@@ -52,6 +52,8 @@ type ArticleState = {
     error: boolean
     errorDescription: string
     showAIPanel: boolean
+    aiPanelWidth: number
+    isResizing: boolean
 }
 
 class Article extends React.Component<ArticleProps, ArticleState> {
@@ -69,6 +71,8 @@ class Article extends React.Component<ArticleProps, ArticleState> {
             error: false,
             errorDescription: "",
             showAIPanel: false,
+            aiPanelWidth: 360,
+            isResizing: false,
         }
         window.utils.addWebviewContextListener(this.contextMenuHandler)
         window.utils.addWebviewKeydownListener(this.keyDownHandler)
@@ -376,9 +380,29 @@ class Article extends React.Component<ArticleProps, ArticleState> {
             }&m=${this.state.loadFull ? 1 : 0}`
     }
 
+    startResize = (e: React.MouseEvent) => {
+        e.preventDefault()
+        this.setState({ isResizing: true })
+        window.addEventListener("mousemove", this.doResize)
+        window.addEventListener("mouseup", this.stopResize)
+    }
+
+    doResize = (e: MouseEvent) => {
+        if (this.state.isResizing) {
+            const newWidth = window.innerWidth - e.clientX
+            this.setState({ aiPanelWidth: Math.max(300, newWidth) })
+        }
+    }
+
+    stopResize = () => {
+        this.setState({ isResizing: false })
+        window.removeEventListener("mousemove", this.doResize)
+        window.removeEventListener("mouseup", this.stopResize)
+    }
+
     render = () => (
-        <FocusZone className="article">
-            <Stack horizontal style={{ height: 36 }}>
+        <FocusZone className="article" style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <Stack horizontal style={{ height: 36, flexShrink: 0 }}>
                 <span style={{ width: 96 }}></span>
                 <Stack
                     className="actions"
@@ -480,56 +504,86 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                     />
                 </Stack>
             </Stack>
-            {(!this.state.loadFull || this.state.fullContent) && (
-                <webview
-                    id="article"
-                    className={this.state.error ? "error" : ""}
-                    key={
-                        this.props.item._id +
-                        (this.state.loadWebpage ? "_" : "") +
-                        (this.state.loadFull ? "__" : "")
-                    }
-                    src={
-                        this.state.loadWebpage
-                            ? this.props.item.link
-                            : this.articleView()
-                    }
-                    allowpopups={"true" as unknown as boolean}
-                    webpreferences="contextIsolation,disableDialogs,autoplayPolicy=document-user-activation-required"
-                    partition={this.state.loadWebpage ? "sandbox" : undefined}
-                />
-            )}
-            {this.state.error && (
-                <Stack
-                    className="error-prompt"
-                    verticalAlign="center"
-                    horizontalAlign="center"
-                    tokens={{ childrenGap: 12 }}>
-                    <Icon iconName="HeartBroken" style={{ fontSize: 32 }} />
-                    <Stack
-                        horizontal
-                        horizontalAlign="center"
-                        tokens={{ childrenGap: 7 }}>
-                        <small>{intl.get("article.error")}</small>
-                        <small>
-                            <Link onClick={this.webviewReload}>
-                                {intl.get("article.reload")}
-                            </Link>
-                        </small>
-                    </Stack>
-                    <span style={{ fontSize: 11 }}>
-                        {this.state.errorDescription}
-                    </span>
-                </Stack>
-            )}
-            {this.state.showAIPanel && !this.state.loadWebpage && (
-                <AIPanel
-                    articleTitle={this.props.item.title}
-                    articleContent={this.state.loadFull ? this.state.fullContent : this.props.item.content}
-                    onClose={() => this.setState({ showAIPanel: false })}
-                />
-            )}
-        </FocusZone>
+            <div style={{ display: "flex", flex: 1, position: "relative", overflow: "hidden" }}>
+                <div style={{ flex: 1, height: "100%", position: "relative", overflow: "hidden" }}>
+                    {(!this.state.loadFull || this.state.fullContent) && (
+                        <webview
+                            id="article"
+                            className={this.state.error ? "error" : ""}
+                            key={
+                                this.props.item._id +
+                                (this.state.loadWebpage ? "_" : "") +
+                                (this.state.loadFull ? "__" : "")
+                            }
+                            src={
+                                this.state.loadWebpage
+                                    ? this.props.item.link
+                                    : this.articleView()
+                            }
+                            allowpopups={"true" as unknown as boolean}
+                            webpreferences="contextIsolation,disableDialogs,autoplayPolicy=document-user-activation-required"
+                            partition={this.state.loadWebpage ? "sandbox" : undefined}
+                            style={{ width: "100%", height: "100%" }}
+                        />
+                    )}
+                    {this.state.error && (
+                        <Stack
+                            className="error-prompt"
+                            verticalAlign="center"
+                            horizontalAlign="center"
+                            tokens={{ childrenGap: 12 }}>
+                            <Icon iconName="HeartBroken" style={{ fontSize: 32 }} />
+                            <Stack
+                                horizontal
+                                horizontalAlign="center"
+                                tokens={{ childrenGap: 7 }}>
+                                <small>{intl.get("article.error")}</small>
+                                <small>
+                                    <Link onClick={this.webviewReload}>
+                                        {intl.get("article.reload")}
+                                    </Link>
+                                </small>
+                            </Stack>
+                            <span style={{ fontSize: 11 }}>
+                                {this.state.errorDescription}
+                            </span>
+                        </Stack>
+                    )}
+                    {this.state.isResizing && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                zIndex: 9999,
+                                cursor: "col-resize",
+                            }}
+                        />
+                    )}
+                </div>
+                {this.state.showAIPanel && !this.state.loadWebpage && (
+                    <>
+                        <div
+                            onMouseDown={this.startResize}
+                            style={{
+                                width: 5,
+                                cursor: "col-resize",
+                                backgroundColor: "transparent",
+                                zIndex: 100,
+                            }}
+                        />
+                        <AIPanel
+                            width={this.state.aiPanelWidth}
+                            articleTitle={this.props.item.title}
+                            articleContent={this.state.loadFull ? this.state.fullContent : this.props.item.content}
+                            onClose={() => this.setState({ showAIPanel: false })}
+                        />
+                    </>
+                )}
+            </div>
+        </FocusZone >
     )
 }
 

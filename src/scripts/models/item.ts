@@ -40,6 +40,7 @@ export class RSSItem {
     hidden: boolean
     notify: boolean
     serviceRef?: string
+    aiHistory?: any[]
 
     constructor(item: MyParserItem, source: RSSSource) {
         for (let field of ["title", "link", "creator"]) {
@@ -113,6 +114,7 @@ export const MARK_ALL_READ = "MARK_ALL_READ"
 export const MARK_UNREAD = "MARK_UNREAD"
 export const TOGGLE_STARRED = "TOGGLE_STARRED"
 export const TOGGLE_HIDDEN = "TOGGLE_HIDDEN"
+export const UPDATE_AI_HISTORY = "UPDATE_AI_HISTORY"
 
 interface FetchItemsAction {
     type: typeof FETCH_ITEMS
@@ -151,6 +153,12 @@ interface ToggleHiddenAction {
     item: RSSItem
 }
 
+interface UpdateAIHistoryAction {
+    type: typeof UPDATE_AI_HISTORY
+    item: RSSItem
+    history: any[]
+}
+
 export type ItemActionTypes =
     | FetchItemsAction
     | MarkReadAction
@@ -158,6 +166,7 @@ export type ItemActionTypes =
     | MarkUnreadAction
     | ToggleStarredAction
     | ToggleHiddenAction
+    | UpdateAIHistoryAction
 
 export function fetchItemsRequest(fetchCount = 0): ItemActionTypes {
     return {
@@ -225,17 +234,17 @@ export function fetchItems(
             let sources =
                 sids === null
                     ? Object.values(sourcesState).filter(s => {
-                          let last = s.lastFetched ? s.lastFetched.getTime() : 0
-                          return (
-                              !s.serviceRef &&
-                              (last > timenow ||
-                                  last + (s.fetchFrequency || 0) * 60000 <=
-                                      timenow)
-                          )
-                      })
+                        let last = s.lastFetched ? s.lastFetched.getTime() : 0
+                        return (
+                            !s.serviceRef &&
+                            (last > timenow ||
+                                last + (s.fetchFrequency || 0) * 60000 <=
+                                timenow)
+                        )
+                    })
                     : sids
-                          .map(sid => sourcesState[sid])
-                          .filter(s => !s.serviceRef)
+                        .map(sid => sourcesState[sid])
+                        .filter(s => !s.serviceRef)
             for (let source of sources) {
                 let promise = RSSSource.fetchItems(source)
                 promise.then(() =>
@@ -413,6 +422,23 @@ const toggleHiddenDone = (item: RSSItem): ItemActionTypes => ({
     item: item,
 })
 
+const updateAIHistoryDone = (item: RSSItem, history: any[]): ItemActionTypes => ({
+    type: UPDATE_AI_HISTORY,
+    item: item,
+    history: history,
+})
+
+export function updateAIHistory(item: RSSItem, history: any[]): AppThunk {
+    return dispatch => {
+        db.itemsDB
+            .update(db.items)
+            .where(db.items._id.eq(item._id))
+            .set(db.items.aiHistory, history)
+            .exec()
+        dispatch(updateAIHistoryDone(item, history))
+    }
+}
+
 export function toggleHidden(item: RSSItem): AppThunk {
     return dispatch => {
         db.itemsDB
@@ -451,7 +477,7 @@ export function itemShortcuts(item: RSSItem, e: KeyboardEvent): AppThunk {
     }
 }
 
-export function applyItemReduction(item: RSSItem, type: string) {
+export function applyItemReduction(item: RSSItem, type: string, action?: any) {
     let nextItem = { ...item }
     switch (type) {
         case MARK_READ:
@@ -465,6 +491,10 @@ export function applyItemReduction(item: RSSItem, type: string) {
         }
         case TOGGLE_HIDDEN: {
             nextItem.hidden = !item.hidden
+            break
+        }
+        case UPDATE_AI_HISTORY: {
+            nextItem.aiHistory = (action as UpdateAIHistoryAction).history
             break
         }
     }
@@ -495,12 +525,14 @@ export function itemReducer(
         case MARK_UNREAD:
         case MARK_READ:
         case TOGGLE_STARRED:
-        case TOGGLE_HIDDEN: {
+        case TOGGLE_HIDDEN:
+        case UPDATE_AI_HISTORY: {
             return {
                 ...state,
                 [action.item._id]: applyItemReduction(
                     state[action.item._id],
-                    action.type
+                    action.type,
+                    action
                 ),
             }
         }

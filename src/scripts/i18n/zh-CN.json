@@ -257,6 +257,7 @@
         "thinking": "思考中...",
         "error": "获取 AI 响应失败",
         "noConfig": "请先配置 AI 设置",
-        "inputPlaceholder": "询问关于这篇文章的问题..."
+        "inputPlaceholder": "询问关于这篇文章的问题...",
+        "clearHistory": "清空当前对话"
     }
 }

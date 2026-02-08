@@ -8,6 +8,7 @@ import {
     toggleStarred,
     toggleHidden,
     itemShortcuts,
+    updateAIHistory,
 } from "../scripts/models/item"
 import { AppDispatch } from "../scripts/utils"
 import { dismissItem, showOffsetItem } from "../scripts/models/page"
@@ -71,6 +72,8 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
                 updateSource({ ...source, textDir: direction } as RSSSource)
             )
         },
+        updateAIHistory: (item: RSSItem, history: any[]) =>
+            dispatch(updateAIHistory(item, history)),
     }
 }
 

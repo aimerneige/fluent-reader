@@ -259,6 +259,7 @@
         "thinking": "Thinking...",
         "error": "Failed to get AI response.",
         "noConfig": "Please configure AI settings first.",
-        "inputPlaceholder": "Ask a question about this article..."
+        "inputPlaceholder": "Ask a question about this article...",
+        "clearHistory": "Clear current conversation"
     }
 }

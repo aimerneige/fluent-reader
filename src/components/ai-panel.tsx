@@ -28,6 +28,8 @@ type AIMessage = {
 type AIPanelProps = {
     articleTitle: string
     articleContent: string
+    history?: AIMessage[]
+    onHistoryUpdate: (history: AIMessage[]) => void
     onClose: () => void
 }
 
@@ -45,7 +47,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
     constructor(props: AIPanelProps) {
         super(props)
         this.state = {
-            messages: [],
+            messages: props.history || [],
             input: "",
             loading: false,
             error: null,
@@ -94,6 +96,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             },
             () => {
                 this.scrollToBottom()
+                this.props.onHistoryUpdate(this.state.messages)
                 this.streamResponse()
             }
         )
@@ -148,6 +151,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             },
             () => {
                 this.setState({ loading: false, abortController: null })
+                this.props.onHistoryUpdate(this.state.messages)
             },
             abortController.signal
         )
@@ -165,6 +169,13 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
 
     handlePresetPrompt = (prompt: string) => {
         this.sendMessage(prompt)
+    }
+
+    clearHistory = () => {
+        if (this.state.loading) return
+        this.setState({ messages: [] }, () => {
+            this.props.onHistoryUpdate([])
+        })
     }
 
     renderMessage = (message: AIMessage, index: number) => (
@@ -225,6 +236,12 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                         </span>
                     </Stack.Item>
                     <Stack.Item>
+                        <IconButton
+                            iconProps={{ iconName: "Delete" }}
+                            onClick={this.clearHistory}
+                            title={intl.get("ai.clearHistory")}
+                            disabled={this.state.loading || this.state.messages.length === 0}
+                        />
                         <IconButton
                             iconProps={{ iconName: "Cancel" }}
                             onClick={this.props.onClose}

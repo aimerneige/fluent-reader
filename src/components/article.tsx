@@ -40,6 +40,7 @@ type ArticleProps = {
         source: RSSSource,
         direction: SourceTextDirection
     ) => void
+    updateAIHistory: (item: RSSItem, history: any[]) => void
 }
 
 type ArticleState = {
@@ -526,6 +527,8 @@ class Article extends React.Component<ArticleProps, ArticleState> {
                 <AIPanel
                     articleTitle={this.props.item.title}
                     articleContent={this.state.loadFull ? this.state.fullContent : this.props.item.content}
+                    history={this.props.item.aiHistory}
+                    onHistoryUpdate={(history) => this.props.updateAIHistory(this.props.item, history)}
                     onClose={() => this.setState({ showAIPanel: false })}
                 />
             )}

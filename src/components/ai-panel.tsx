@@ -43,6 +43,8 @@ type AIPanelState = {
     error: string | null
     abortController: AbortController | null
     showClearDialog: boolean
+    width: number
+    isResizing: boolean
 }
 
 class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
@@ -50,6 +52,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
 
     constructor(props: AIPanelProps) {
         super(props)
+        const savedWidth = localStorage.getItem("ai-panel-width")
         this.state = {
             messages: props.history || [],
             input: "",
@@ -57,6 +60,8 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             error: null,
             abortController: null,
             showClearDialog: false,
+            width: savedWidth ? parseInt(savedWidth) : 360,
+            isResizing: false,
         }
         this.messagesEndRef = React.createRef()
     }
@@ -65,9 +70,41 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
         this.messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
 
+    componentDidMount() {
+        document.addEventListener("mousemove", this.handleMouseMove)
+        document.addEventListener("mouseup", this.handleMouseUp)
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("mousemove", this.handleMouseMove)
+        document.removeEventListener("mouseup", this.handleMouseUp)
+    }
+
     componentDidUpdate(_prevProps: AIPanelProps, prevState: AIPanelState) {
         if (prevState.messages.length !== this.state.messages.length) {
             this.scrollToBottom()
+        }
+    }
+
+    handleMouseDown = (e: React.MouseEvent) => {
+        e.preventDefault()
+        this.setState({ isResizing: true })
+        document.body.style.cursor = "col-resize"
+    }
+
+    handleMouseMove = (e: MouseEvent) => {
+        if (!this.state.isResizing) return
+        const newWidth = window.innerWidth - e.clientX
+        if (newWidth > 200 && newWidth < window.innerWidth * 0.8) {
+            this.setState({ width: newWidth })
+        }
+    }
+
+    handleMouseUp = () => {
+        if (this.state.isResizing) {
+            this.setState({ isResizing: false })
+            document.body.style.cursor = "default"
+            localStorage.setItem("ai-panel-width", this.state.width.toString())
         }
     }
 
@@ -223,7 +260,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                     right: 0,
                     top: 36,
                     bottom: 0,
-                    width: 360,
+                    width: this.state.width,
                     backgroundColor: "var(--white)",
                     borderLeft: "1px solid var(--neutralLight)",
                     display: "flex",
@@ -231,6 +268,19 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                     zIndex: 100,
                     boxShadow: "-5px 0 20px rgba(0,0,0,0.15)",
                 }}>
+                {/* Drag bar */}
+                <div
+                    onMouseDown={this.handleMouseDown}
+                    style={{
+                        position: "absolute",
+                        left: -4,
+                        top: 0,
+                        bottom: 0,
+                        width: 8,
+                        cursor: "col-resize",
+                        zIndex: 101,
+                    }}
+                />
                 {/* Header */}
                 <Stack
                     horizontal

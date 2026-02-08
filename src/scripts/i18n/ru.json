@@ -237,5 +237,30 @@
         "pacHint": "Для Socks прокси рекомендуется, чтобы PAC возвращал \"SOCKS5\" для DNS на стороне прокси. Выключение прокси требует перезапуска.",
         "fetchInterval": "Интервал автоматического обновления",
         "never": "Никогда"
+    },
+    "ai": {
+        "name": "ИИ Ассистент",
+        "provider": "Провайдер",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Базовый URL",
+        "apiKey": "API Ключ",
+        "model": "Модель",
+        "prompts": "Шаблоны запросов",
+        "promptName": "Название шаблона",
+        "promptContent": "Содержание шаблона",
+        "addPrompt": "Добавить шаблон",
+        "deletePrompt": "Удалить",
+        "askAI": "Спросить ИИ",
+        "send": "Отправить",
+        "stop": "Стоп",
+        "thinking": "Думаю...",
+        "error": "Не удалось получить ответ от ИИ.",
+        "noConfig": "Пожалуйста, сначала настройте ИИ.",
+        "inputPlaceholder": "Задайте вопрос об этой статье...",
+        "clearHistory": "Очистить историю",
+        "confirmClearHistory": "Очистить историю?",
+        "confirmClearHistorySubtitle": "Все сообщения в этом диалоге будут удалены безвозвратно."
     }
 }

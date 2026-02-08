@@ -228,5 +228,30 @@
         "pacHint": "Pour les proxies Sockets, il est recommandé que le PAC retourne \"SOCKS5\" pour le DNS côté proxies. La désactivation du proxy nécessite un redémarrage.",
         "fetchInterval": "Intervalle de récupération automatique",
         "never": "Jamais"
+    },
+    "ai": {
+        "name": "Assistant IA",
+        "provider": "Fournisseur",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "URL de base",
+        "apiKey": "Clé API",
+        "model": "Modèle",
+        "prompts": "Prompts prédéfinis",
+        "promptName": "Nom du prompt",
+        "promptContent": "Contenu du prompt",
+        "addPrompt": "Ajouter un prompt",
+        "deletePrompt": "Supprimer",
+        "askAI": "Demander à l'IA",
+        "send": "Envoyer",
+        "stop": "Arrêter",
+        "thinking": "Réfléchit...",
+        "error": "Échec de la réponse de l'IA.",
+        "noConfig": "Veuillez d'abord configurer les paramètres de l'IA.",
+        "inputPlaceholder": "Posez une question sur cet article...",
+        "clearHistory": "Effacer la conversation",
+        "confirmClearHistory": "Effacer la conversation ?",
+        "confirmClearHistorySubtitle": "Tous les messages de cette conversation seront définitivement supprimés."
     }
 }

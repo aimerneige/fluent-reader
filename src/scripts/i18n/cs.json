@@ -238,5 +238,30 @@
         "pacHint": "U proxy serverů Socks se doporučuje, aby PAC vracel \"SOCKS5\" pro DNS na straně proxy serveru. Vypnutí proxy vyžaduje restart.",
         "fetchInterval": "Automatický interval načítání",
         "never": "Nikdy"
+    },
+    "ai": {
+        "name": "AI Asistent",
+        "provider": "Poskytovatel",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Základní URL",
+        "apiKey": "API Klíč",
+        "model": "Model",
+        "prompts": "Přednastavené prompty",
+        "promptName": "Název promptu",
+        "promptContent": "Obsah promptu",
+        "addPrompt": "Přidat prompt",
+        "deletePrompt": "Smazat",
+        "askAI": "Zeptat se AI",
+        "send": "Odeslat",
+        "stop": "Stop",
+        "thinking": "Přemýšlím...",
+        "error": "Nepodařilo se získat odpověď od AI.",
+        "noConfig": "Prosím nejprve nakonfigurujte AI.",
+        "inputPlaceholder": "Zeptejte se na tento článek...",
+        "clearHistory": "Vymazat konverzaci",
+        "confirmClearHistory": "Vymazat konverzaci?",
+        "confirmClearHistorySubtitle": "Všechny zprávy v této konverzaci budou trvale smazány."
     }
 }

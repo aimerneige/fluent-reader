@@ -228,5 +228,30 @@
         "pacHint": "Socks proxy'leri için, PAC'ın proxy tarafı DNS için \"SOCKS5\" döndürmesi önerilir. Proxy'yi kapatmak, yeniden başlatmayı gerektirir.",
         "fetchInterval": "Otomatik getirme aralığı",
         "never": "Asla"
+    },
+    "ai": {
+        "name": "Yapay Zeka Asistanı",
+        "provider": "Sağlayıcı",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Temel URL",
+        "apiKey": "API Anahtarı",
+        "model": "Model",
+        "prompts": "Ön Ayarlı İstemler",
+        "promptName": "İstem Adı",
+        "promptContent": "İstem İçeriği",
+        "addPrompt": "İstem Ekle",
+        "deletePrompt": "Sil",
+        "askAI": "YZ'ye Sor",
+        "send": "Gönder",
+        "stop": "Dur",
+        "thinking": "Düşünüyor...",
+        "error": "YZ yanıtı alınamadı.",
+        "noConfig": "Lütfen önce YZ ayarlarını yapılandırın.",
+        "inputPlaceholder": "Bu makale hakkında bir soru sorun...",
+        "clearHistory": "Mevcut konuşmayı temizle",
+        "confirmClearHistory": "Konuşmayı temizle?",
+        "confirmClearHistorySubtitle": "Bu konuşmadaki tüm mesajlar kalıcı olarak silinecektir."
     }
 }

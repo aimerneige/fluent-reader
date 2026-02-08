@@ -176,5 +176,30 @@
         "pac": "Dirección PAC",
         "setPac": "Establecer PAC",
         "pacHint": "Para proxies de tipo Socks proxies, se recomienda que PAC devuelva \"SOCKS5\" respecto del DNS del proxy. Desactivar el proxy requiere reiniciar."
+    },
+    "ai": {
+        "name": "Asistente de IA",
+        "provider": "Proveedor",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "URL base",
+        "apiKey": "Clave API",
+        "model": "Modelo",
+        "prompts": "Prompts preestablecidos",
+        "promptName": "Nombre del prompt",
+        "promptContent": "Contenido del prompt",
+        "addPrompt": "Añadir prompt",
+        "deletePrompt": "Eliminar",
+        "askAI": "Preguntar a la IA",
+        "send": "Enviar",
+        "stop": "Detener",
+        "thinking": "Pensando...",
+        "error": "Error al obtener respuesta de la IA.",
+        "noConfig": "Por favor configure la IA primero.",
+        "inputPlaceholder": "Haz una pregunta sobre este artículo...",
+        "clearHistory": "Borrar conversación",
+        "confirmClearHistory": "¿Borrar conversación?",
+        "confirmClearHistorySubtitle": "Todos los mensajes de esta conversación se eliminarán permanentemente."
     }
 }

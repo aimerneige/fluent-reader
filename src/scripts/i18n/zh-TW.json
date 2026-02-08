@@ -236,5 +236,30 @@
         "pacHint": "對於Socks代理建議PAC返回“SOCKS5”以啟用代理端解析。關閉代理需重啟應用後生效。",
         "fetchInterval": "自動抓取頻率",
         "never": "從不"
+    },
+    "ai": {
+        "name": "AI 助手",
+        "provider": "服務商",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "API 地址",
+        "apiKey": "API 金鑰",
+        "model": "模型",
+        "prompts": "預設提示詞",
+        "promptName": "提示詞名稱",
+        "promptContent": "提示詞內容",
+        "addPrompt": "新增提示詞",
+        "deletePrompt": "刪除",
+        "askAI": "詢問 AI",
+        "send": "傳送",
+        "stop": "停止",
+        "thinking": "思考中...",
+        "error": "獲取 AI 回應失敗",
+        "noConfig": "請先配置 AI 設定",
+        "inputPlaceholder": "詢問關於這篇文章的問題...",
+        "clearHistory": "清空當前對話",
+        "confirmClearHistory": "清空對話？",
+        "confirmClearHistorySubtitle": "當前文章的所有對話記錄將被永久刪除。"
     }
 }

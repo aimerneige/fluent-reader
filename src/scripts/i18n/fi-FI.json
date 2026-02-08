@@ -231,5 +231,30 @@
         "m": "min",
         "minute": "{m, plural, =1 {# minutti} other {# minuttia}}",
         "now": "nyt"
+    },
+    "ai": {
+        "name": "AI-avustaja",
+        "provider": "Palveluntarjoaja",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Perus URL",
+        "apiKey": "API-avain",
+        "model": "Malli",
+        "prompts": "Esiasetetut kehotteet",
+        "promptName": "Kehotteen nimi",
+        "promptContent": "Kehotteen sisältö",
+        "addPrompt": "Lisää kehote",
+        "deletePrompt": "Poista",
+        "askAI": "Kysy AI:lta",
+        "send": "Lähetä",
+        "stop": "Lopeta",
+        "thinking": "Ajatellaan...",
+        "error": "AI-vastauksen haku epäonnistui.",
+        "noConfig": "Määritä AI-asetukset ensin.",
+        "inputPlaceholder": "Kysy tästä artikkelista...",
+        "clearHistory": "Tyhjennä nykyinen keskustelu",
+        "confirmClearHistory": "Tyhjennä keskustelu?",
+        "confirmClearHistorySubtitle": "Kaikki tämän keskustelun viestit poistetaan pysyvästi."
     }
 }

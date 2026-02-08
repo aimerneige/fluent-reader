@@ -231,5 +231,30 @@
         "pacHint": "Sockプロキシの場合にPACが“SOCKS5”を返すことをお勧めします。プロキシを停止してから再起動する必要があります。",
         "fetchInterval": "フェッチ間隔",
         "never": "しない"
+    },
+    "ai": {
+        "name": "AI アシスタント",
+        "provider": "プロバイダー",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "API ベースURL",
+        "apiKey": "API キー",
+        "model": "モデル",
+        "prompts": "プリセットプロンプト",
+        "promptName": "プロンプト名",
+        "promptContent": "プロンプト内容",
+        "addPrompt": "プロンプトを追加",
+        "deletePrompt": "削除",
+        "askAI": "AI に尋ねる",
+        "send": "送信",
+        "stop": "停止",
+        "thinking": "思考中...",
+        "error": "AI の応答取得に失敗しました。",
+        "noConfig": "先に AI 設定を構成してください。",
+        "inputPlaceholder": "この記事について質問する...",
+        "clearHistory": "現在の会話をクリア",
+        "confirmClearHistory": "会話をクリアしますか？",
+        "confirmClearHistorySubtitle": "この記事のすべてのメッセージが永久に削除されます。"
     }
 }

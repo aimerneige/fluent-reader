@@ -231,5 +231,30 @@
         "pacHint": "Für SOCKS-Proxies wird empfohlen, für proxy-seitiges DNS im PAC \"SOCKS5\" zurückzugeben. Das Deaktivieren des Proxies erfordert einen Neustart.",
         "fetchInterval": "Automatisches Abrufintervall",
         "never": "Nie"
+    },
+    "ai": {
+        "name": "AI-Assistent",
+        "provider": "Anbieter",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Basis-URL",
+        "apiKey": "API-Schlüssel",
+        "model": "Modell",
+        "prompts": "Voreingestellte Prompts",
+        "promptName": "Prompt-Name",
+        "promptContent": "Prompt-Inhalt",
+        "addPrompt": "Prompt hinzufügen",
+        "deletePrompt": "Löschen",
+        "askAI": "AI fragen",
+        "send": "Senden",
+        "stop": "Stopp",
+        "thinking": "Nachdenken...",
+        "error": "Fehler beim Abrufen der AI-Antwort.",
+        "noConfig": "Bitte konfigurieren Sie zuerst die AI-Einstellungen.",
+        "inputPlaceholder": "Stellen Sie eine Frage zu diesem Artikel...",
+        "clearHistory": "Aktuelle Unterhaltung löschen",
+        "confirmClearHistory": "Unterhaltung löschen?",
+        "confirmClearHistorySubtitle": "Alle Nachrichten in dieser Unterhaltung werden dauerhaft gelöscht."
     }
 }

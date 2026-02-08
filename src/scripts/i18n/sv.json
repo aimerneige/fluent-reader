@@ -231,5 +231,30 @@
         "pacHint": "För Socks-proxyservrar rekommenderas att PAC returnerar \"SOCKS5\" för DNS på proxysidan. Om du stänger av proxyn krävs omstart.",
         "fetchInterval": "Automatiskt hämtningsintervall",
         "never": "Aldrig"
+    },
+    "ai": {
+        "name": "AI-assistent",
+        "provider": "Leverantör",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Bas-URL",
+        "apiKey": "API-nyckel",
+        "model": "Modell",
+        "prompts": "Förinställda prompts",
+        "promptName": "Promptnamn",
+        "promptContent": "Promptinnehåll",
+        "addPrompt": "Lägg till prompt",
+        "deletePrompt": "Ta bort",
+        "askAI": "Fråga AI",
+        "send": "Skicka",
+        "stop": "Stopp",
+        "thinking": "Tänker...",
+        "error": "Misslyckades med att hämta AI-svar.",
+        "noConfig": "Vänligen konfigurera AI-inställningar först.",
+        "inputPlaceholder": "Ställ en fråga om den här artikeln...",
+        "clearHistory": "Rensa aktuell konversation",
+        "confirmClearHistory": "Rensa konversation?",
+        "confirmClearHistorySubtitle": "Alla meddelanden i denna konversation kommer att tas bort permanent."
     }
 }

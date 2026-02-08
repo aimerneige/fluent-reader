@@ -60,7 +60,10 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             error: null,
             abortController: null,
             showClearDialog: false,
-            width: savedWidth ? parseInt(savedWidth) : 360,
+            width: Math.min(
+                savedWidth ? parseInt(savedWidth) : 360,
+                window.innerWidth * 0.8
+            ),
             isResizing: false,
         }
         this.messagesEndRef = React.createRef()
@@ -94,10 +97,13 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
 
     handleMouseMove = (e: MouseEvent) => {
         if (!this.state.isResizing) return
-        const newWidth = window.innerWidth - e.clientX
-        if (newWidth > 200 && newWidth < window.innerWidth * 0.8) {
-            this.setState({ width: newWidth })
-        }
+        let newWidth = window.innerWidth - e.clientX
+        const maxWidth = window.innerWidth * 0.8
+
+        if (newWidth < 200) newWidth = 200
+        if (newWidth > maxWidth) newWidth = maxWidth
+
+        this.setState({ width: newWidth })
     }
 
     handleMouseUp = () => {

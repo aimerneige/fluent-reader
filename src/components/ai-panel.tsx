@@ -10,6 +10,9 @@ import {
     MessageBar,
     MessageBarType,
     IButtonStyles,
+    Dialog,
+    DialogType,
+    DialogFooter,
 } from "@fluentui/react"
 import { AnimationClassNames } from "@fluentui/react/lib/Styling"
 import {
@@ -39,6 +42,7 @@ type AIPanelState = {
     loading: boolean
     error: string | null
     abortController: AbortController | null
+    showClearDialog: boolean
 }
 
 class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
@@ -52,6 +56,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
             loading: false,
             error: null,
             abortController: null,
+            showClearDialog: false,
         }
         this.messagesEndRef = React.createRef()
     }
@@ -172,8 +177,12 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
     }
 
     clearHistory = () => {
-        if (this.state.loading) return
-        this.setState({ messages: [] }, () => {
+        if (this.state.loading || this.state.messages.length === 0) return
+        this.setState({ showClearDialog: true })
+    }
+
+    confirmClear = () => {
+        this.setState({ messages: [], showClearDialog: false }, () => {
             this.props.onHistoryUpdate([])
         })
     }
@@ -249,6 +258,27 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                         />
                     </Stack.Item>
                 </Stack>
+
+                <Dialog
+                    hidden={!this.state.showClearDialog}
+                    onDismiss={() => this.setState({ showClearDialog: false })}
+                    dialogContentProps={{
+                        type: DialogType.normal,
+                        title: intl.get("ai.confirmClearHistory"),
+                        subText: intl.get("ai.confirmClearHistorySubtitle"),
+                    }}
+                    modalProps={{ isBlocking: true }}>
+                    <DialogFooter>
+                        <PrimaryButton
+                            onClick={this.confirmClear}
+                            text={intl.get("confirm")}
+                        />
+                        <DefaultButton
+                            onClick={() => this.setState({ showClearDialog: false })}
+                            text={intl.get("cancel")}
+                        />
+                    </DialogFooter>
+                </Dialog>
 
                 {/* Preset prompts */}
                 {presetPrompts.length > 0 && (

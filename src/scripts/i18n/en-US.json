@@ -260,6 +260,8 @@
         "error": "Failed to get AI response.",
         "noConfig": "Please configure AI settings first.",
         "inputPlaceholder": "Ask a question about this article...",
-        "clearHistory": "Clear current conversation"
+        "clearHistory": "Clear current conversation",
+        "confirmClearHistory": "Clear Conversation?",
+        "confirmClearHistorySubtitle": "All messages in this conversation will be permanently removed."
     }
 }

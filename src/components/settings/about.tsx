@@ -11,8 +11,19 @@ class AboutTab extends React.Component {
                 <small>
                     {intl.get("settings.version")} {window.utils.getVersion()}
                 </small>
-                <p className="settings-hint">
+                <p className="settings-hint" style={{ textAlign: "center" }}>
                     Copyright © 2020 Haoyuan Liu. All rights reserved.
+                    <br />
+                    Fork maintained by{" "}
+                    <Link
+                        onClick={() =>
+                            window.utils.openExternal(
+                                "mailto:i@aimer.moe"
+                            )
+                        }>
+                        Aimer Neige
+                    </Link>
+                    .
                 </p>
                 <Stack
                     horizontal

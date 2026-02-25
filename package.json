@@ -16,6 +16,10 @@
   },
   "keywords": [],
   "author": "Haoyuan Liu",
+  "contributors": [
+    "Haoyuan Liu",
+    "Aimer Neige <i@aimer.moe>"
+  ],
   "license": "BSD-3-Clause",
   "repository": "github:yang991178/fluent-reader",
   "devDependencies": {

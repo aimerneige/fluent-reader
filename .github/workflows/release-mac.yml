@@ -4,36 +4,41 @@ on:
     release:
         types:
             - published
+    workflow_dispatch:
 
 jobs:
     release-mac:
         runs-on: macos-latest
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: 'npm'
 
             - name: Build and package the app
               run: |
                   npm install
                   npm run build
                   npm run package-mac
-
-            - name: Get app version
-              id: package-version
-              uses: martinbeentjes/npm-get-version-action@master
-
-            - name: Get release
-              id: get_release
-              uses: bruceadams/get-release@v1.2.0
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  # If you have signing certificates, add them to secrets
+                  # CSC_LINK: ${{ secrets.CSC_LINK }}
+                  # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+                  # APPLE_ID: ${{ secrets.APPLE_ID }}
+                  # APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+                  # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Upload dmg to release assets
-              uses: actions/upload-release-asset@v1
+              uses: softprops/action-gh-release@v2
+              if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+              with:
+                  files: |
+                      bin/mac/**/*.dmg
+                      bin/mac/**/*.zip
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.get_release.outputs.upload_url }}
-                  asset_path: "./bin/mac/x64/Fluent Reader-${{ steps.package-version.outputs.current-version }}.dmg"
-                  asset_name: "Fluent.Reader.${{ steps.package-version.outputs.current-version }}.mac.dmg"
-                  asset_content_type: application/octet-stream

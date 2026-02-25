@@ -255,6 +255,8 @@
         "inputPlaceholder": "Задайте питання про цю статтю...",
         "clearHistory": "Очистити історію",
         "confirmClearHistory": "Очистити історію?",
-        "confirmClearHistorySubtitle": "Всі повідомлення в цьому діалозі будуть видалені безповоротно."
+        "confirmClearHistorySubtitle": "Всі повідомлення в цьому діалозі будуть видалені безповоротно.",
+        "copyMessage": "Копіювати",
+        "copied": "Скопійовано!"
     }
 }

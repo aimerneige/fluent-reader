@@ -255,6 +255,8 @@
         "inputPlaceholder": "Kysy tästä artikkelista...",
         "clearHistory": "Tyhjennä nykyinen keskustelu",
         "confirmClearHistory": "Tyhjennä keskustelu?",
-        "confirmClearHistorySubtitle": "Kaikki tämän keskustelun viestit poistetaan pysyvästi."
+        "confirmClearHistorySubtitle": "Kaikki tämän keskustelun viestit poistetaan pysyvästi.",
+        "copyMessage": "Kopioi",
+        "copied": "Kopioitu!"
     }
 }

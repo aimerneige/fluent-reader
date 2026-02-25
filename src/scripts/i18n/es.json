@@ -200,6 +200,8 @@
         "inputPlaceholder": "Haz una pregunta sobre este artículo...",
         "clearHistory": "Borrar conversación",
         "confirmClearHistory": "¿Borrar conversación?",
-        "confirmClearHistorySubtitle": "Todos los mensajes de esta conversación se eliminarán permanentemente."
+        "confirmClearHistorySubtitle": "Todos los mensajes de esta conversación se eliminarán permanentemente.",
+        "copyMessage": "Copiar",
+        "copied": "¡Copiado!"
     }
 }

@@ -262,6 +262,8 @@
         "inputPlaceholder": "Zeptejte se na tento článek...",
         "clearHistory": "Vymazat konverzaci",
         "confirmClearHistory": "Vymazat konverzaci?",
-        "confirmClearHistorySubtitle": "Všechny zprávy v této konverzaci budou trvale smazány."
+        "confirmClearHistorySubtitle": "Všechny zprávy v této konverzaci budou trvale smazány.",
+        "copyMessage": "Kopírovat",
+        "copied": "Zkopírováno!"
     }
 }

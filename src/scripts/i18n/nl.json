@@ -255,6 +255,8 @@
         "inputPlaceholder": "Stel een vraag over dit artikel...",
         "clearHistory": "Huidig gesprek wissen",
         "confirmClearHistory": "Gesprek wissen?",
-        "confirmClearHistorySubtitle": "Alle berichten in dit gesprek worden permanent verwijderd."
+        "confirmClearHistorySubtitle": "Alle berichten in dit gesprek worden permanent verwijderd.",
+        "copyMessage": "Kopiëren",
+        "copied": "Gekopieerd!"
     }
 }

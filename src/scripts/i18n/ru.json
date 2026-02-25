@@ -261,6 +261,8 @@
         "inputPlaceholder": "Задайте вопрос об этой статье...",
         "clearHistory": "Очистить историю",
         "confirmClearHistory": "Очистить историю?",
-        "confirmClearHistorySubtitle": "Все сообщения в этом диалоге будут удалены безвозвратно."
+        "confirmClearHistorySubtitle": "Все сообщения в этом диалоге будут удалены безвозвратно.",
+        "copyMessage": "Копировать",
+        "copied": "Скопировано!"
     }
 }

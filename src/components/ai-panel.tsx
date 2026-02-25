@@ -1,5 +1,6 @@
 import * as React from "react"
 import intl from "react-intl-universal"
+import { marked } from "marked"
 import {
     Stack,
     TextField,
@@ -45,10 +46,26 @@ type AIPanelState = {
     showClearDialog: boolean
     width: number
     isResizing: boolean
+    copiedIndex: number | null
+}
+
+// Configure marked for safe rendering
+marked.setOptions({
+    breaks: true,
+    gfm: true,
+})
+
+function renderMarkdown(content: string): string {
+    try {
+        return marked.parse(content) as string
+    } catch {
+        return content
+    }
 }
 
 class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
     messagesEndRef: React.RefObject<HTMLDivElement>
+    copyTimeout: ReturnType<typeof setTimeout> | null = null
 
     constructor(props: AIPanelProps) {
         super(props)
@@ -65,6 +82,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                 window.innerWidth * 0.8
             ),
             isResizing: false,
+            copiedIndex: null,
         }
         this.messagesEndRef = React.createRef()
     }
@@ -81,6 +99,7 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
     componentWillUnmount() {
         document.removeEventListener("mousemove", this.handleMouseMove)
         document.removeEventListener("mouseup", this.handleMouseUp)
+        if (this.copyTimeout) clearTimeout(this.copyTimeout)
     }
 
     componentDidUpdate(_prevProps: AIPanelProps, prevState: AIPanelState) {
@@ -230,6 +249,16 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
         })
     }
 
+    copyMessage = (index: number, content: string) => {
+        navigator.clipboard.writeText(content).then(() => {
+            this.setState({ copiedIndex: index })
+            if (this.copyTimeout) clearTimeout(this.copyTimeout)
+            this.copyTimeout = setTimeout(() => {
+                this.setState({ copiedIndex: null })
+            }, 2000)
+        })
+    }
+
     renderMessage = (message: AIMessage, index: number) => (
         <div
             key={index}
@@ -244,8 +273,53 @@ class AIPanel extends React.Component<AIPanelProps, AIPanelState> {
                         : "var(--neutralLighter)",
                 alignSelf: message.role === "user" ? "flex-end" : "flex-start",
                 maxWidth: "85%",
+                position: "relative",
             }}>
-            <span style={{ whiteSpace: "pre-wrap" }}>{message.content}</span>
+            {message.role === "assistant" && message.content ? (
+                <>
+                    <div
+                        className="ai-markdown"
+                        dangerouslySetInnerHTML={{
+                            __html: renderMarkdown(message.content),
+                        }}
+                    />
+                    <IconButton
+                        className="ai-copy-btn"
+                        iconProps={{
+                            iconName:
+                                this.state.copiedIndex === index
+                                    ? "CheckMark"
+                                    : "Copy",
+                        }}
+                        title={
+                            this.state.copiedIndex === index
+                                ? intl.get("ai.copied")
+                                : intl.get("ai.copyMessage")
+                        }
+                        onClick={() =>
+                            this.copyMessage(index, message.content)
+                        }
+                        styles={{
+                            root: {
+                                position: "absolute",
+                                top: 4,
+                                right: 4,
+                                width: 24,
+                                height: 24,
+                                opacity:
+                                    this.state.copiedIndex === index
+                                        ? 1
+                                        : undefined,
+                            },
+                            icon: { fontSize: 12 },
+                        }}
+                    />
+                </>
+            ) : (
+                <span style={{ whiteSpace: "pre-wrap" }}>
+                    {message.content}
+                </span>
+            )}
             {message.role === "assistant" &&
                 message.content === "" &&
                 this.state.loading && (

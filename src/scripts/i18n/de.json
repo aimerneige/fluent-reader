@@ -255,6 +255,8 @@
         "inputPlaceholder": "Stellen Sie eine Frage zu diesem Artikel...",
         "clearHistory": "Aktuelle Unterhaltung löschen",
         "confirmClearHistory": "Unterhaltung löschen?",
-        "confirmClearHistorySubtitle": "Alle Nachrichten in dieser Unterhaltung werden dauerhaft gelöscht."
+        "confirmClearHistorySubtitle": "Alle Nachrichten in dieser Unterhaltung werden dauerhaft gelöscht.",
+        "copyMessage": "Kopieren",
+        "copied": "Kopiert!"
     }
 }

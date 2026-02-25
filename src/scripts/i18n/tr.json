@@ -252,6 +252,8 @@
         "inputPlaceholder": "Bu makale hakkında bir soru sorun...",
         "clearHistory": "Mevcut konuşmayı temizle",
         "confirmClearHistory": "Konuşmayı temizle?",
-        "confirmClearHistorySubtitle": "Bu konuşmadaki tüm mesajlar kalıcı olarak silinecektir."
+        "confirmClearHistorySubtitle": "Bu konuşmadaki tüm mesajlar kalıcı olarak silinecektir.",
+        "copyMessage": "Kopyala",
+        "copied": "Kopyalandı!"
     }
 }

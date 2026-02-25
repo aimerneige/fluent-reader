@@ -255,6 +255,8 @@
         "inputPlaceholder": "この記事について質問する...",
         "clearHistory": "現在の会話をクリア",
         "confirmClearHistory": "会話をクリアしますか？",
-        "confirmClearHistorySubtitle": "この記事のすべてのメッセージが永久に削除されます。"
+        "confirmClearHistorySubtitle": "この記事のすべてのメッセージが永久に削除されます。",
+        "copyMessage": "コピー",
+        "copied": "コピーしました！"
     }
 }

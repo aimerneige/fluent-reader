@@ -260,6 +260,8 @@
         "inputPlaceholder": "詢問關於這篇文章的問題...",
         "clearHistory": "清空當前對話",
         "confirmClearHistory": "清空對話？",
-        "confirmClearHistorySubtitle": "當前文章的所有對話記錄將被永久刪除。"
+        "confirmClearHistorySubtitle": "當前文章的所有對話記錄將被永久刪除。",
+        "copyMessage": "複製",
+        "copied": "已複製！"
     }
 }

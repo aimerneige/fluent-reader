@@ -262,6 +262,8 @@
         "inputPlaceholder": "Ask a question about this article...",
         "clearHistory": "Clear current conversation",
         "confirmClearHistory": "Clear Conversation?",
-        "confirmClearHistorySubtitle": "All messages in this conversation will be permanently removed."
+        "confirmClearHistorySubtitle": "All messages in this conversation will be permanently removed.",
+        "copyMessage": "Copy",
+        "copied": "Copied!"
     }
 }

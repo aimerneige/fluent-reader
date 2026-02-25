@@ -255,6 +255,8 @@
         "inputPlaceholder": "Ställ en fråga om den här artikeln...",
         "clearHistory": "Rensa aktuell konversation",
         "confirmClearHistory": "Rensa konversation?",
-        "confirmClearHistorySubtitle": "Alla meddelanden i denna konversation kommer att tas bort permanent."
+        "confirmClearHistorySubtitle": "Alla meddelanden i denna konversation kommer att tas bort permanent.",
+        "copyMessage": "Kopiera",
+        "copied": "Kopierad!"
     }
 }

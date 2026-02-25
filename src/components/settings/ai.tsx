@@ -92,6 +92,13 @@ class AITab extends React.Component<{}, AITabState> {
         })
     }
 
+    onModelDropdownChange = (_: any, option: IDropdownOption) => {
+        this.setState(
+            { config: { ...this.state.config, model: String(option.key) } },
+            this.saveConfig
+        )
+    }
+
     onBlur = () => {
         this.saveConfig()
     }
@@ -208,19 +215,27 @@ class AITab extends React.Component<{}, AITabState> {
             <Label>{intl.get("ai.model")}</Label>
             <Stack horizontal>
                 <Stack.Item grow>
-                    <TextField
-                        value={this.state.config.model}
-                        onChange={this.onModelChange}
-                        onBlur={this.onBlur}
-                        placeholder={
-                            this.state.config.provider === AIProvider.Ollama
-                                ? "llama3.2"
-                                : this.state.config.provider ===
-                                    AIProvider.DeepSeek
-                                    ? "deepseek-chat"
+                    {this.state.config.provider === AIProvider.DeepSeek ? (
+                        <Dropdown
+                            selectedKey={this.state.config.model}
+                            options={[
+                                { key: "deepseek-chat", text: "deepseek-chat" },
+                                { key: "deepseek-reasoner", text: "deepseek-reasoner" },
+                            ]}
+                            onChange={this.onModelDropdownChange}
+                        />
+                    ) : (
+                        <TextField
+                            value={this.state.config.model}
+                            onChange={this.onModelChange}
+                            onBlur={this.onBlur}
+                            placeholder={
+                                this.state.config.provider === AIProvider.Ollama
+                                    ? "llama3.2"
                                     : "gpt-3.5-turbo"
-                        }
-                    />
+                            }
+                        />
+                    )}
                 </Stack.Item>
             </Stack>
 

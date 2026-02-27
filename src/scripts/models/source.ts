@@ -1,6 +1,6 @@
 import intl from "react-intl-universal"
 import * as db from "../db"
-import lf from "lovefield"
+
 import {
     fetchFavicon,
     ActionStatus,
@@ -72,18 +72,11 @@ export class RSSSource {
         item: MyParserItem
     ): Promise<RSSItem> {
         let i = new RSSItem(item, source)
-        const items = (await db.itemsDB
-            .select()
-            .from(db.items)
-            .where(
-                lf.op.and(
-                    db.items.source.eq(i.source),
-                    db.items.title.eq(i.title),
-                    db.items.date.eq(i.date)
-                )
-            )
+        const items = await db.items
+            .where("source").equals(i.source)
+            .filter(item => item.title === i.title && item.date.getTime() === i.date.getTime())
             .limit(1)
-            .exec()) as RSSItem[]
+            .toArray()
         if (items.length === 0) {
             RSSItem.parseContent(i, item)
             if (source.rules) SourceRule.applyAll(source.rules, i)
@@ -198,14 +191,15 @@ export function initSourcesFailure(err): SourceActionTypes {
 }
 
 async function unreadCount(sources: SourceState): Promise<SourceState> {
-    const rows = await db.itemsDB
-        .select(db.items.source, lf.fn.count(db.items._id))
-        .from(db.items)
-        .where(db.items.hasRead.eq(false))
-        .groupBy(db.items.source)
-        .exec()
-    for (let row of rows) {
-        sources[row["source"]].unreadCount = row["COUNT(_id)"]
+    const unreadItems = await db.items.filter(item => !item.hasRead).toArray()
+    const counts = new Map<number, number>()
+    for (let item of unreadItems) {
+        counts.set(item.source, (counts.get(item.source) || 0) + 1)
+    }
+    for (const [sourceId, count] of counts) {
+        if (sources[sourceId]) {
+            sources[sourceId].unreadCount = count
+        }
     }
     return sources
 }
@@ -230,10 +224,7 @@ export function initSources(): AppThunk<Promise<void>> {
     return async dispatch => {
         dispatch(initSourcesRequest())
         await db.init()
-        const sources = (await db.sourcesDB
-            .select()
-            .from(db.sources)
-            .exec()) as RSSSource[]
+        const sources = await db.sources.toArray()
         const state: SourceState = {}
         for (let source of sources) {
             source.unreadCount = 0
@@ -281,14 +272,9 @@ export function insertSource(source: RSSSource): AppThunk<Promise<RSSSource>> {
             insertPromises = insertPromises.then(async () => {
                 let sids = Object.values(getState().sources).map(s => s.sid)
                 source.sid = Math.max(...sids, -1) + 1
-                const row = db.sources.createRow(source)
                 try {
-                    const inserted = (await db.sourcesDB
-                        .insert()
-                        .into(db.sources)
-                        .values([row])
-                        .exec()) as RSSSource[]
-                    resolve(inserted[0])
+                    await db.sources.put(source)
+                    resolve(source)
                 } catch (err) {
                     if (err.code === 201) reject(intl.get("sources.exist"))
                     else reject(err)
@@ -345,12 +331,7 @@ export function updateSource(source: RSSSource): AppThunk<Promise<void>> {
     return async dispatch => {
         let sourceCopy = { ...source }
         delete sourceCopy.unreadCount
-        const row = db.sources.createRow(sourceCopy)
-        await db.sourcesDB
-            .insertOrReplace()
-            .into(db.sources)
-            .values([row])
-            .exec()
+        await db.sources.put(sourceCopy)
         dispatch(updateSourceDone(source))
     }
 }
@@ -369,16 +350,8 @@ export function deleteSource(
     return async (dispatch, getState) => {
         if (!batch) dispatch(saveSettings())
         try {
-            await db.itemsDB
-                .delete()
-                .from(db.items)
-                .where(db.items.source.eq(source.sid))
-                .exec()
-            await db.sourcesDB
-                .delete()
-                .from(db.sources)
-                .where(db.sources.sid.eq(source.sid))
-                .exec()
+            await db.items.where("source").equals(source.sid).delete()
+            await db.sources.where("sid").equals(source.sid).delete()
             dispatch(deleteSourceDone(source))
             window.settings.saveGroups(getState().groups)
         } catch (err) {

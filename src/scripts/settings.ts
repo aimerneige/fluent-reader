@@ -96,8 +96,8 @@ export async function exportAll() {
     if (write) {
         let output = window.settings.getAll()
         output["lovefield"] = {
-            sources: await db.sourcesDB.select().from(db.sources).exec(),
-            items: await db.itemsDB.select().from(db.items).exec(),
+            sources: await db.sources.toArray(),
+            items: await db.items.toArray(),
         }
         write(JSON.stringify(output), intl.get("settings.writeError"))
     }
@@ -117,8 +117,8 @@ export async function importAll() {
     )
     if (!confirmed) return true
     let configs = JSON.parse(data)
-    await db.sourcesDB.delete().from(db.sources).exec()
-    await db.itemsDB.delete().from(db.items).exec()
+    await db.sources.clear()
+    await db.items.clear()
     if (configs.nedb) {
         let openRequest = window.indexedDB.open("NeDB")
         configs.useNeDB = true
@@ -147,15 +147,15 @@ export async function importAll() {
             s.lastFetched = new Date(s.lastFetched)
             if (!s.textDir) s.textDir = SourceTextDirection.LTR
             if (!s.hidden) s.hidden = false
-            return db.sources.createRow(s)
+            return s
         })
         const iRows = configs.lovefield.items.map(i => {
             i.date = new Date(i.date)
             i.fetchedDate = new Date(i.fetchedDate)
-            return db.items.createRow(i)
+            return i
         })
-        await db.sourcesDB.insert().into(db.sources).values(sRows).exec()
-        await db.itemsDB.insert().into(db.items).values(iRows).exec()
+        await db.sources.bulkAdd(sRows)
+        await db.items.bulkAdd(iRows)
         delete configs.lovefield
         window.settings.setAll(configs)
     }

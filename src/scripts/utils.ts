@@ -232,7 +232,7 @@ function byteLength(str: string) {
 export function calculateItemSize(): Promise<number> {
     return new Promise((resolve, reject) => {
         let result = 0
-        let openRequest = window.indexedDB.open("itemsDB")
+        let openRequest = window.indexedDB.open("fluent-reader-db")
         openRequest.onsuccess = () => {
             let db = openRequest.result
             let objectStore = db.transaction("items").objectStore("items")

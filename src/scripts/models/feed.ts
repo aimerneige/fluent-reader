@@ -1,5 +1,5 @@
 import * as db from "../db"
-import lf from "lovefield"
+
 import {
     SourceActionTypes,
     INIT_SOURCES,
@@ -47,31 +47,7 @@ export class FeedFilter {
         this.search = search
     }
 
-    static toPredicates(filter: FeedFilter) {
-        let type = filter.type
-        const predicates = new Array<lf.Predicate>()
-        if (!(type & FilterType.ShowRead))
-            predicates.push(db.items.hasRead.eq(false))
-        if (!(type & FilterType.ShowNotStarred))
-            predicates.push(db.items.starred.eq(true))
-        if (!(type & FilterType.ShowHidden))
-            predicates.push(db.items.hidden.eq(false))
-        if (filter.search !== "") {
-            const flags = type & FilterType.CaseInsensitive ? "i" : ""
-            const regex = RegExp(filter.search, flags)
-            if (type & FilterType.FullSearch) {
-                predicates.push(
-                    lf.op.or(
-                        db.items.title.match(regex),
-                        db.items.snippet.match(regex)
-                    )
-                )
-            } else {
-                predicates.push(db.items.title.match(regex))
-            }
-        }
-        return predicates
-    }
+
 
     static testItem(filter: FeedFilter, item: RSSItem) {
         let type = filter.type
@@ -119,16 +95,14 @@ export class RSSFeed {
     }
 
     static async loadFeed(feed: RSSFeed, skip = 0): Promise<RSSItem[]> {
-        const predicates = FeedFilter.toPredicates(feed.filter)
-        predicates.push(db.items.source.in(feed.sids))
-        return (await db.itemsDB
-            .select()
-            .from(db.items)
-            .where(lf.op.and.apply(null, predicates))
-            .orderBy(db.items.date, lf.Order.DESC)
-            .skip(skip)
+        const sidsSet = new Set(feed.sids);
+        return await db.items
+            .orderBy("date")
+            .reverse()
+            .filter(item => sidsSet.has(item.source) && FeedFilter.testItem(feed.filter, item))
+            .offset(skip)
             .limit(LOAD_QUANTITY)
-            .exec()) as RSSItem[]
+            .toArray();
     }
 }
 
@@ -486,13 +460,13 @@ export function feedReducer(
                 case PageType.AllArticles:
                     return action.init
                         ? {
-                              ...state,
-                              [ALL]: {
-                                  ...state[ALL],
-                                  loaded: false,
-                                  filter: action.filter,
-                              },
-                          }
+                            ...state,
+                            [ALL]: {
+                                ...state[ALL],
+                                loaded: false,
+                                filter: action.filter,
+                            },
+                        }
                         : state
                 default:
                     return state

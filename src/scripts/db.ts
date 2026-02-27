@@ -1,78 +1,28 @@
 import intl from "react-intl-universal"
-import Datastore from "nedb"
-import lf from "lovefield"
+import Datastore from "@seald-io/nedb"
+import Dexie, { Table } from "dexie"
 import { RSSSource } from "./models/source"
 import { RSSItem } from "./models/item"
 
-const sdbSchema = lf.schema.create("sourcesDB", 3)
-sdbSchema
-    .createTable("sources")
-    .addColumn("sid", lf.Type.INTEGER)
-    .addPrimaryKey(["sid"], false)
-    .addColumn("url", lf.Type.STRING)
-    .addColumn("iconurl", lf.Type.STRING)
-    .addColumn("name", lf.Type.STRING)
-    .addColumn("openTarget", lf.Type.NUMBER)
-    .addColumn("lastFetched", lf.Type.DATE_TIME)
-    .addColumn("serviceRef", lf.Type.STRING)
-    .addColumn("fetchFrequency", lf.Type.NUMBER)
-    .addColumn("rules", lf.Type.OBJECT)
-    .addColumn("textDir", lf.Type.NUMBER)
-    .addColumn("hidden", lf.Type.BOOLEAN)
-    .addNullable(["iconurl", "serviceRef", "rules"])
-    .addIndex("idxURL", ["url"], true)
+export class AppDatabase extends Dexie {
+    sources!: Table<RSSSource, number>;
+    items!: Table<RSSItem, number>;
 
-const idbSchema = lf.schema.create("itemsDB", 2)
-idbSchema
-    .createTable("items")
-    .addColumn("_id", lf.Type.INTEGER)
-    .addPrimaryKey(["_id"], true)
-    .addColumn("source", lf.Type.INTEGER)
-    .addColumn("title", lf.Type.STRING)
-    .addColumn("link", lf.Type.STRING)
-    .addColumn("date", lf.Type.DATE_TIME)
-    .addColumn("fetchedDate", lf.Type.DATE_TIME)
-    .addColumn("thumb", lf.Type.STRING)
-    .addColumn("content", lf.Type.STRING)
-    .addColumn("snippet", lf.Type.STRING)
-    .addColumn("creator", lf.Type.STRING)
-    .addColumn("hasRead", lf.Type.BOOLEAN)
-    .addColumn("starred", lf.Type.BOOLEAN)
-    .addColumn("hidden", lf.Type.BOOLEAN)
-    .addColumn("notify", lf.Type.BOOLEAN)
-    .addColumn("serviceRef", lf.Type.STRING)
-    .addColumn("aiHistory", lf.Type.OBJECT)
-    .addNullable(["thumb", "creator", "serviceRef", "aiHistory"])
-    .addIndex("idxDate", ["date"], false, lf.Order.DESC)
-    .addIndex("idxService", ["serviceRef"], false)
-
-export let sourcesDB: lf.Database
-export let sources: lf.schema.Table
-export let itemsDB: lf.Database
-export let items: lf.schema.Table
-
-async function onUpgradeSourceDB(rawDb: lf.raw.BackStore) {
-    const version = rawDb.getVersion()
-    if (version < 2) {
-        await rawDb.addTableColumn("sources", "textDir", 0)
-    }
-    if (version < 3) {
-        await rawDb.addTableColumn("sources", "hidden", false)
+    constructor() {
+        super("fluent-reader-db");
+        this.version(1).stores({
+            sources: "sid, url",
+            items: "++_id, source, date, serviceRef, hasRead"
+        });
     }
 }
 
-async function onUpgradeItemsDB(rawDb: lf.raw.BackStore) {
-    const version = rawDb.getVersion()
-    if (version < 2) {
-        await rawDb.addTableColumn("items", "aiHistory", null)
-    }
-}
+export const appDB = new AppDatabase();
+export const sources = appDB.sources;
+export const items = appDB.items;
 
 export async function init() {
-    sourcesDB = await sdbSchema.connect({ onUpgrade: onUpgradeSourceDB })
-    sources = sourcesDB.getSchema().table("sources")
-    itemsDB = await idbSchema.connect({ onUpgrade: onUpgradeItemsDB })
-    items = itemsDB.getSchema().table("items")
+    await appDB.open();
     if (window.settings.getNeDBStatus()) {
         await migrateNeDB()
     }
@@ -112,7 +62,7 @@ async function migrateNeDB() {
             if (!doc.fetchFrequency) doc.fetchFrequency = 0
             doc.textDir = 0
             doc.hidden = false
-            return sources.createRow(doc)
+            return doc
         })
         const iRows = itemDocs.map(doc => {
             if (doc.serviceRef !== undefined)
@@ -124,11 +74,11 @@ async function migrateNeDB() {
             doc.starred = Boolean(doc.starred)
             doc.hidden = Boolean(doc.hidden)
             doc.notify = Boolean(doc.notify)
-            return items.createRow(doc)
+            return doc
         })
         await Promise.all([
-            sourcesDB.insert().into(sources).values(sRows).exec(),
-            itemsDB.insert().into(items).values(iRows).exec(),
+            appDB.sources.bulkAdd(sRows),
+            appDB.items.bulkAdd(iRows),
         ])
         window.settings.setNeDBStatus(false)
         sdb.remove({}, { multi: true }, () => {

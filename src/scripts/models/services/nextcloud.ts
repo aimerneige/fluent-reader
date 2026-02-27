@@ -1,6 +1,6 @@
 import intl from "react-intl-universal"
 import * as db from "../../db"
-import lf from "lovefield"
+
 import { ServiceHooks } from "../service"
 import { ServiceConfigs, SyncService } from "../../../schema-types"
 import { createSourceGroup } from "../group"
@@ -154,8 +154,8 @@ export const nextcloudServiceHooks: ServiceHooks = {
             const response = await fetchAPI(
                 configs,
                 "/items/updated?lastModified=" +
-                    configs.lastModified +
-                    "&type=3"
+                configs.lastModified +
+                "&type=3"
             )
             if (response.status !== 200) throw APIError()
             lastFetched = (await response.json()).items
@@ -240,22 +240,17 @@ export const nextcloudServiceHooks: ServiceHooks = {
     markAllRead: (sids, date, before) => async (_, getState) => {
         const state = getState()
         const configs = state.service as NextcloudConfigs
-        const predicates: lf.Predicate[] = [
-            db.items.source.in(sids),
-            db.items.hasRead.eq(false),
-            db.items.serviceRef.isNotNull(),
-        ]
-        if (date) {
-            predicates.push(
-                before ? db.items.date.lte(date) : db.items.date.gte(date)
-            )
-        }
-        const query = lf.op.and.apply(null, predicates)
-        const rows = await db.itemsDB
-            .select(db.items.serviceRef)
-            .from(db.items)
-            .where(query)
-            .exec()
+        const rows = await db.items
+            .where("source").anyOf(sids)
+            .filter(item => {
+                if (item.hasRead) return false;
+                if (!item.serviceRef) return false;
+                if (date) {
+                    return before ? item.date <= date : item.date >= date;
+                }
+                return true;
+            })
+            .toArray()
         const refs = rows.map(row => parseInt(row["serviceRef"]))
         markItems(configs, "unread", "POST", refs)
     },

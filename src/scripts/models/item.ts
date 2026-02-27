@@ -1,5 +1,5 @@
 import * as db from "../db"
-import lf from "lovefield"
+
 import intl from "react-intl-universal"
 import type { MyParserItem } from "../utils"
 import {
@@ -206,12 +206,9 @@ export function fetchItemsIntermediate(): ItemActionTypes {
 
 export async function insertItems(items: RSSItem[]): Promise<RSSItem[]> {
     items.sort((a, b) => a.date.getTime() - b.date.getTime())
-    const rows = items.map(item => db.items.createRow(item))
-    return (await db.itemsDB
-        .insert()
-        .into(db.items)
-        .values(rows)
-        .exec()) as RSSItem[]
+    const keys = await db.items.bulkAdd(items, { allKeys: true })
+    items.forEach((item, i) => item._id = keys[i] as number)
+    return items
 }
 
 export function fetchItems(
@@ -317,11 +314,7 @@ export function markRead(item: RSSItem): AppThunk {
     return (dispatch, getState) => {
         item = getState().items[item._id]
         if (!item.hasRead) {
-            db.itemsDB
-                .update(db.items)
-                .where(db.items._id.eq(item._id))
-                .set(db.items.hasRead, true)
-                .exec()
+            db.items.update(item._id, { hasRead: true })
             dispatch(markReadDone(item))
             if (item.serviceRef) {
                 dispatch(dispatch(getServiceHooks()).markRead?.(item))
@@ -347,21 +340,16 @@ export function markAllRead(
             before
         )
         if (action) await dispatch(action)
-        const predicates: lf.Predicate[] = [
-            db.items.source.in(sids),
-            db.items.hasRead.eq(false),
-        ]
-        if (date) {
-            predicates.push(
-                before ? db.items.date.lte(date) : db.items.date.gte(date)
-            )
-        }
-        const query = lf.op.and.apply(null, predicates)
-        await db.itemsDB
-            .update(db.items)
-            .set(db.items.hasRead, true)
-            .where(query)
-            .exec()
+        await db.items
+            .where("source").anyOf(sids)
+            .filter(item => {
+                if (item.hasRead) return false;
+                if (date) {
+                    return before ? item.date <= date : item.date >= date;
+                }
+                return true;
+            })
+            .modify({ hasRead: true })
         if (date) {
             dispatch({
                 type: MARK_ALL_READ,
@@ -383,11 +371,7 @@ export function markUnread(item: RSSItem): AppThunk {
     return (dispatch, getState) => {
         item = getState().items[item._id]
         if (item.hasRead) {
-            db.itemsDB
-                .update(db.items)
-                .where(db.items._id.eq(item._id))
-                .set(db.items.hasRead, false)
-                .exec()
+            db.items.update(item._id, { hasRead: false })
             dispatch(markUnreadDone(item))
             if (item.serviceRef) {
                 dispatch(dispatch(getServiceHooks()).markUnread?.(item))
@@ -403,11 +387,7 @@ const toggleStarredDone = (item: RSSItem): ItemActionTypes => ({
 
 export function toggleStarred(item: RSSItem): AppThunk {
     return dispatch => {
-        db.itemsDB
-            .update(db.items)
-            .where(db.items._id.eq(item._id))
-            .set(db.items.starred, !item.starred)
-            .exec()
+        db.items.update(item._id, { starred: !item.starred })
         dispatch(toggleStarredDone(item))
         if (item.serviceRef) {
             const hooks = dispatch(getServiceHooks())
@@ -430,22 +410,14 @@ const updateAIHistoryDone = (item: RSSItem, history: any[]): ItemActionTypes => 
 
 export function updateAIHistory(item: RSSItem, history: any[]): AppThunk {
     return dispatch => {
-        db.itemsDB
-            .update(db.items)
-            .where(db.items._id.eq(item._id))
-            .set(db.items.aiHistory, history)
-            .exec()
+        db.items.update(item._id, { aiHistory: history })
         dispatch(updateAIHistoryDone(item, history))
     }
 }
 
 export function toggleHidden(item: RSSItem): AppThunk {
     return dispatch => {
-        db.itemsDB
-            .update(db.items)
-            .where(db.items._id.eq(item._id))
-            .set(db.items.hidden, !item.hidden)
-            .exec()
+        db.items.update(item._id, { hidden: !item.hidden })
         dispatch(toggleHiddenDone(item))
     }
 }

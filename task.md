@@ -106,9 +106,9 @@
    - [x] 移除 `redux-devtools`（源代码中无引用）
 
 2. **第二阶段**：替换废弃包
-   - [ ] 评估 `nedb` 替代方案（如 `nedb-promises`、`better-sqlite3`、`lowdb`）
-   - [ ] 评估 `lovefield` 替代方案（如 `sql.js`、`Dexie.js`）
-   - [ ] 清理相关 `@types` 包
+   - [x] 评估 `nedb` 替代方案（如 `nedb-promises`、`better-sqlite3`、`lowdb`）- 决定使用 `@seald-io/nedb`
+   - [x] 评估 `lovefield` 替代方案（如 `sql.js`、`Dexie.js`）- 决定使用 `dexie`
+   - [x] 清理相关 `@types` 包
 
 3. **第三阶段**：React 生态升级
    - [ ] React 16 → 18（先不直接跳到 19，降低风险）

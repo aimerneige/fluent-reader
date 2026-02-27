@@ -1,7 +1,7 @@
 # Fluent Reader 依赖更新计划
 
 > 调查时间：2026-02-27
-> 项目当前共有 34 个已知安全漏洞（8 low, 7 moderate, 10 high, 9 critical）
+> 项目当前共有 13 个已知安全漏洞（5 low, 3 moderate, 0 high, 5 critical）
 
 ---
 
@@ -100,10 +100,10 @@
 ## 📋 建议的升级顺序
 
 1. **第一阶段**：修复安全漏洞
-   - [ ] 运行 `npm audit fix` 修复可自动修复的漏洞
-   - [ ] 升级 `electron-builder` 到 ^26
-   - [ ] 移除 `electron-react-devtools`（已过时）
-   - [ ] 移除 `redux-devtools`，替换为 `@redux-devtools/core` 或使用浏览器扩展
+   - [x] 升级 `webpack` ^5.89 → ^5.98（修复 SSRF 漏洞）
+   - [x] 升级 `electron-builder` 到 ^26（修复 NSIS 任意代码执行漏洞）
+   - [x] 移除 `electron-react-devtools`（已过时，源代码中无引用）
+   - [x] 移除 `redux-devtools`（源代码中无引用）
 
 2. **第二阶段**：替换废弃包
    - [ ] 评估 `nedb` 替代方案（如 `nedb-promises`、`better-sqlite3`、`lowdb`）

@@ -6,7 +6,7 @@ import {
     FocusZone,
     FocusZoneDirection,
     List,
-} from "office-ui-fabric-react"
+} from "@fluentui/react"
 import { RSSItem } from "../../scripts/models/item"
 import { AnimationClassNames } from "@fluentui/react"
 import { ViewType } from "../../schema-types"

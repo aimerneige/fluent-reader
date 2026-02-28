@@ -2,7 +2,7 @@ import * as React from "react"
 import intl from "react-intl-universal"
 import { FeedProps } from "./feed"
 import DefaultCard from "../cards/default-card"
-import { PrimaryButton, FocusZone } from "office-ui-fabric-react"
+import { PrimaryButton, FocusZone } from "@fluentui/react"
 import { RSSItem } from "../../scripts/models/item"
 import { List, AnimationClassNames } from "@fluentui/react"
 

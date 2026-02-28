@@ -1,6 +1,6 @@
 import * as React from "react"
 import intl from "react-intl-universal"
-import QRCode from "qrcode.react"
+import { QRCodeSVG } from "qrcode.react"
 import {
     cutText,
     webSearch,
@@ -12,7 +12,7 @@ import {
     IContextualMenuItem,
     ContextualMenuItemType,
     DirectionalHint,
-} from "office-ui-fabric-react/lib/ContextualMenu"
+} from "@fluentui/react/lib/ContextualMenu"
 import { closeContextMenu, ContextMenuType } from "../scripts/models/app"
 import {
     markAllRead,
@@ -39,7 +39,7 @@ export const shareSubmenu = (item: RSSItem): IContextualMenuItem[] => [
 
 export const renderShareQR = (item: IContextualMenuItem) => (
     <div className="qr-container">
-        <QRCode value={item.url} size={150} renderAs="svg" />
+        <QRCodeSVG value={item.url} size={150} />
     </div>
 )
 
@@ -110,9 +110,9 @@ function ItemContextMenu() {
                 : intl.get("article.markRead"),
             iconProps: item.hasRead
                 ? {
-                      iconName: "RadioBtnOn",
-                      style: { fontSize: 14, textAlign: "center" },
-                  }
+                    iconName: "RadioBtnOn",
+                    style: { fontSize: 14, textAlign: "center" },
+                }
                 : { iconName: "StatusCircleRing" },
             onClick: () => {
                 if (item.hasRead) {
@@ -201,63 +201,63 @@ function ItemContextMenu() {
         },
         ...(viewConfigs !== undefined
             ? [
-                  {
-                      key: "divider_2",
-                      itemType: ContextualMenuItemType.Divider,
-                  },
-                  {
-                      key: "view",
-                      text: intl.get("context.view"),
-                      subMenuProps: {
-                          items: [
-                              {
-                                  key: "showCover",
-                                  text: intl.get("context.showCover"),
-                                  canCheck: true,
-                                  checked: Boolean(
-                                      viewConfigs & ViewConfigs.ShowCover
-                                  ),
-                                  onClick: () =>
-                                      dispatch(
-                                          setViewConfigs(
-                                              viewConfigs ^
-                                                  ViewConfigs.ShowCover
-                                          )
-                                      ),
-                              },
-                              {
-                                  key: "showSnippet",
-                                  text: intl.get("context.showSnippet"),
-                                  canCheck: true,
-                                  checked: Boolean(
-                                      viewConfigs & ViewConfigs.ShowSnippet
-                                  ),
-                                  onClick: () =>
-                                      dispatch(
-                                          setViewConfigs(
-                                              viewConfigs ^
-                                                  ViewConfigs.ShowSnippet
-                                          )
-                                      ),
-                              },
-                              {
-                                  key: "fadeRead",
-                                  text: intl.get("context.fadeRead"),
-                                  canCheck: true,
-                                  checked: Boolean(
-                                      viewConfigs & ViewConfigs.FadeRead
-                                  ),
-                                  onClick: () =>
-                                      dispatch(
-                                          setViewConfigs(
-                                              viewConfigs ^ ViewConfigs.FadeRead
-                                          )
-                                      ),
-                              },
-                          ],
-                      },
-                  },
-              ]
+                {
+                    key: "divider_2",
+                    itemType: ContextualMenuItemType.Divider,
+                },
+                {
+                    key: "view",
+                    text: intl.get("context.view"),
+                    subMenuProps: {
+                        items: [
+                            {
+                                key: "showCover",
+                                text: intl.get("context.showCover"),
+                                canCheck: true,
+                                checked: Boolean(
+                                    viewConfigs & ViewConfigs.ShowCover
+                                ),
+                                onClick: () =>
+                                    dispatch(
+                                        setViewConfigs(
+                                            viewConfigs ^
+                                            ViewConfigs.ShowCover
+                                        )
+                                    ),
+                            },
+                            {
+                                key: "showSnippet",
+                                text: intl.get("context.showSnippet"),
+                                canCheck: true,
+                                checked: Boolean(
+                                    viewConfigs & ViewConfigs.ShowSnippet
+                                ),
+                                onClick: () =>
+                                    dispatch(
+                                        setViewConfigs(
+                                            viewConfigs ^
+                                            ViewConfigs.ShowSnippet
+                                        )
+                                    ),
+                            },
+                            {
+                                key: "fadeRead",
+                                text: intl.get("context.fadeRead"),
+                                canCheck: true,
+                                checked: Boolean(
+                                    viewConfigs & ViewConfigs.FadeRead
+                                ),
+                                onClick: () =>
+                                    dispatch(
+                                        setViewConfigs(
+                                            viewConfigs ^ ViewConfigs.FadeRead
+                                        )
+                                    ),
+                            },
+                        ],
+                    },
+                },
+            ]
             : []),
     ]
     return <ContextMenuBase menuItems={menuItems} />
@@ -272,16 +272,16 @@ function TextContextMenu() {
     const url = target[1]
     const menuItems: IContextualMenuItem[] = text
         ? [
-              {
-                  key: "copyText",
-                  text: intl.get("context.copy"),
-                  iconProps: { iconName: "Copy" },
-                  onClick: () => {
-                      window.utils.writeClipboard(text)
-                  },
-              },
-              getSearchItem(text),
-          ]
+            {
+                key: "copyText",
+                text: intl.get("context.copy"),
+                iconProps: { iconName: "Copy" },
+                onClick: () => {
+                    window.utils.writeClipboard(text)
+                },
+            },
+            getSearchItem(text),
+        ]
         : []
     if (url) {
         menuItems.push({

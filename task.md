@@ -111,9 +111,9 @@
    - [x] 清理相关 `@types` 包
 
 3. **第三阶段**：React 生态升级
-   - [ ] React 16 → 18（先不直接跳到 19，降低风险）
-   - [ ] 同步升级 `@fluentui/react` v7 → v8
-   - [ ] 同步升级 `react-redux`, `qrcode.react`, `react-intl-universal`
+   - [x] React 16 → 18（先不直接跳到 19，降低风险）
+   - [x] 同步升级 `@fluentui/react` v7 → v8
+   - [x] 同步升级 `react-redux`, `qrcode.react`, `react-intl-universal`
 
 4. **第四阶段**：状态管理升级
    - [ ] 升级 `redux` 到 v5（或迁移到 Redux Toolkit）

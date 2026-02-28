@@ -121,7 +121,7 @@ export class Menu extends React.Component<MenuProps> {
         this.props.groupContextMenu(sids, event)
     }
 
-    _onRenderLink = (link: INavLink): JSX.Element => {
+    _onRenderLink = (link: INavLink): React.JSX.Element => {
         let count = link.ariaLabel.split(" ").pop()
         return (
             <Stack
@@ -137,7 +137,7 @@ export class Menu extends React.Component<MenuProps> {
         )
     }
 
-    _onRenderGroupHeader = (group: INavLinkGroup): JSX.Element => {
+    _onRenderGroupHeader = (group: INavLinkGroup): React.JSX.Element => {
         return (
             <p className={"subs-header " + AnimationClassNames.slideDownIn10}>
                 {group.name}

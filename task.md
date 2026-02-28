@@ -125,4 +125,4 @@
    - [x] 升级 `electron-store`, `font-list`, `js-md5` 等
 
 6. **第六阶段**（可选）：React 18 → 19
-   - [ ] 评估是否需要进一步升级到 React 19
+   - [x] 评估是否需要进一步升级到 React 19

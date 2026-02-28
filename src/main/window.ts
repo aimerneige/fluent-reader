@@ -1,6 +1,6 @@
-import windowStateKeeper = require("electron-window-state")
+import windowStateKeeper from "electron-window-state"
 import { BrowserWindow, nativeTheme, app } from "electron"
-import path = require("path")
+import * as path from "path"
 import { setThemeListener } from "./settings"
 import { setUtilsListeners } from "./utils"
 
@@ -48,8 +48,8 @@ export class WindowManager {
                     process.platform === "darwin"
                         ? "#00000000"
                         : nativeTheme.shouldUseDarkColors
-                        ? "#282828"
-                        : "#faf9f8",
+                            ? "#282828"
+                            : "#faf9f8",
                 vibrancy: "sidebar",
                 x: this.mainWindowState.x,
                 y: this.mainWindowState.y,

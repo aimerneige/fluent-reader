@@ -120,9 +120,9 @@
    - [x] 同步升级 `redux-thunk`, `reselect`, 修复 ts 与 react-redux 9 相关破损
 
 5. **第五阶段**：工具链和小版本更新
-   - [ ] 对齐 `package.json` 版本声明
-   - [ ] 升级 `prettier`, `ts-loader`, `webpack-cli` 等
-   - [ ] 升级 `electron-store`, `font-list`, `js-md5` 等
+   - [x] 对齐 `package.json` 版本声明
+   - [x] 升级 `prettier`, `ts-loader`, `webpack-cli` 等
+   - [x] 升级 `electron-store`, `font-list`, `js-md5` 等
 
 6. **第六阶段**（可选）：React 18 → 19
    - [ ] 评估是否需要进一步升级到 React 19

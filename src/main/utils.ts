@@ -1,9 +1,9 @@
 import { ipcMain, shell, dialog, app, session, clipboard } from "electron"
 import { WindowManager } from "./window"
-import fs = require("fs")
+import * as fs from "fs"
 import { ImageCallbackTypes, TouchBarTexts } from "../schema-types"
 import { initMainTouchBar } from "./touchbar"
-import fontList = require("font-list")
+import fontList from "font-list"
 
 export function setUtilsListeners(manager: WindowManager) {
     async function openExternal(url: string, background = false) {
@@ -181,7 +181,7 @@ export function setUtilsListeners(manager: WindowManager) {
                                         openExternal(
                                             params.srcURL,
                                             type ===
-                                                ImageCallbackTypes.OpenExternalBg
+                                            ImageCallbackTypes.OpenExternalBg
                                         )
                                         break
                                     case ImageCallbackTypes.SaveAs:

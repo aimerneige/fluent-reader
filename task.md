@@ -116,8 +116,8 @@
    - [x] 同步升级 `react-redux`, `qrcode.react`, `react-intl-universal`
 
 4. **第四阶段**：状态管理升级
-   - [ ] 升级 `redux` 到 v5（或迁移到 Redux Toolkit）
-   - [ ] 同步升级 `redux-thunk`, `reselect`
+   - [x] 升级 `redux` 到 v5（或迁移到 Redux Toolkit）
+   - [x] 同步升级 `redux-thunk`, `reselect`, 修复 ts 与 react-redux 9 相关破损
 
 5. **第五阶段**：工具链和小版本更新
    - [ ] 对齐 `package.json` 版本声明

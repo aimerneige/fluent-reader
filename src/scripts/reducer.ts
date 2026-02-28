@@ -1,5 +1,5 @@
-import { applyMiddleware, combineReducers, createStore } from "redux"
-import thunkMiddleware from "redux-thunk"
+import { applyMiddleware, combineReducers, legacy_createStore as createStore } from "redux"
+import { thunk as thunkMiddleware } from "redux-thunk"
 
 import { sourceReducer } from "./models/source"
 import { itemReducer } from "./models/item"
@@ -28,7 +28,8 @@ export const rootReducer = combineReducers({
 
 export const rootStore = createStore(
     rootReducer,
-    applyMiddleware<AppDispatch, RootState>(thunkMiddleware)
+    undefined,
+    applyMiddleware(thunkMiddleware)
 )
 
 export type AppStore = typeof rootStore

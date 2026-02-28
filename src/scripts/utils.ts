@@ -1,6 +1,6 @@
 import intl from "react-intl-universal"
 import { ThunkAction, ThunkDispatch } from "redux-thunk"
-import { AnyAction } from "redux"
+import { Action } from "redux"
 import { RootState } from "./reducer"
 import Parser from "rss-parser"
 import Url from "url"
@@ -17,10 +17,10 @@ export type AppThunk<ReturnType = void> = ThunkAction<
     ReturnType,
     RootState,
     unknown,
-    AnyAction
+    Action<string>
 >
 
-export type AppDispatch = ThunkDispatch<RootState, undefined, AnyAction>
+export type AppDispatch = ThunkDispatch<RootState, undefined, Action<string>>
 
 const rssParser = new Parser({
     customFields: {

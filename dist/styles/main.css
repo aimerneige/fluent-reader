@@ -30,8 +30,8 @@
 .menu-container,
 .article-container,
 .article-wrapper {
-    animation-duration: 0.5s;
-    animation-timing-function: var(--transition-timing);
+    animation-duration: 0.4s;
+    animation-timing-function: var(--ease-decelerate, cubic-bezier(0, 0, 0, 1));
     animation-fill-mode: both;
 }
 .menu-container {
@@ -52,7 +52,8 @@
     background-color: var(--neutralLighterAltOpacity);
     backdrop-filter: var(--blur);
     box-shadow: 5px 0 25px #0004;
-    transition: clip-path var(--transition-timing) 0.367s,
+    transition:
+        clip-path var(--transition-timing) 0.367s,
         opacity cubic-bezier(0, 0, 0.2, 1) 0.367s;
     clip-path: inset(0 100% 0 0);
     opacity: 0;
@@ -104,13 +105,24 @@ body.darwin .menu .btn-group {
     height: 100%;
     background-color: var(--neutralLight);
     overflow: hidden;
+    animation: settings-fade-in var(--duration-normal, 200ms)
+        var(--ease-decelerate, cubic-bezier(0, 0, 0, 1)) both;
+}
+@keyframes settings-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 .settings-container .settings {
     margin: 64px auto 0;
     width: 680px;
     height: calc(100% - 64px);
     background-color: var(--white);
-    box-shadow: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132),
+    box-shadow:
+        0 6.4px 14.4px 0 rgba(0, 0, 0, 0.132),
         0 1.2px 3.6px 0 rgba(0, 0, 0, 0.108);
     overflow: hidden;
 }
@@ -166,6 +178,17 @@ img.favicon.dropdown {
     overflow-x: hidden;
     overflow-y: auto;
     margin-bottom: 16px;
+}
+
+/* Drag-and-drop visual feedback for group/source reordering */
+.ms-DetailsList .ms-DetailsRow.drag-drop-target {
+    border-top: 2px solid var(--themePrimary, #0078d4);
+    background-color: var(--themeLight, #c7e0f4);
+}
+.ms-DetailsList .ms-DetailsRow[draggable="true"].ms-DetailsRow.is-dragging {
+    opacity: 0.5;
+    background-color: var(--neutralLighter, #f3f2f1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .settings-hint {
     user-select: none;
@@ -229,7 +252,8 @@ img.favicon.dropdown {
     border: none;
     -webkit-app-region: none;
     height: calc(var(--navHeight) - 4px);
-    box-shadow: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
+    box-shadow:
+        0 1.6px 3.6px 0 rgba(0, 0, 0, 0.132),
         0 0.3px 0.9px 0 rgba(0, 0, 0, 0.108);
 }
 body.darwin.not-fullscreen .article-search {
@@ -324,4 +348,44 @@ body.darwin .list-main .article-search {
     .btn-group .btn.inline-block-wide {
         display: inline-block;
     }
+}
+
+/* Archive Manager Styles */
+.archive-manager {
+    margin-top: 8px;
+    padding: 12px;
+    border: 1px solid var(--neutralLight, #edebe9);
+    border-radius: 4px;
+    background: var(--neutralLighter, #f3f2f1);
+}
+.archive-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0.7;
+}
+.archive-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.archive-item {
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--neutralLight, #edebe9);
+}
+.archive-item:last-child {
+    border-bottom: none;
+}
+.archive-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.archive-time {
+    font-size: 13px;
+    font-weight: 600;
+}
+.archive-meta {
+    font-size: 11px;
+    opacity: 0.7;
 }

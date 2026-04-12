@@ -48,6 +48,21 @@
     background-color: #ffaa44;
     font-size: 10px;
     box-sizing: border-box;
+    animation: unread-pulse var(--duration-normal, 200ms)
+        var(--ease-decelerate, cubic-bezier(0, 0, 0, 1)) 1;
+}
+@keyframes unread-pulse {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.4);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 .starred-indicator::after {
     content: "★";
@@ -55,6 +70,21 @@
     color: #ffaa44;
     font-size: 11px;
     line-height: 16px;
+    display: inline-block;
+    animation: star-pop 300ms var(--ease-decelerate, cubic-bezier(0, 0, 0, 1)) 1;
+}
+@keyframes star-pop {
+    0% {
+        transform: scale(0) rotate(-45deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.3) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
 }
 
 .card {
@@ -64,6 +94,7 @@
     transform: scale(1);
     cursor: pointer;
     overflow: hidden;
+    content-visibility: auto;
 }
 .card:focus {
     outline: none;
@@ -104,7 +135,9 @@
     background-color: var(--white);
     box-shadow: #0004 0 5px 20px;
     margin: 18px 12px;
-    transition: box-shadow linear 0.08s, transform linear 0.08s;
+    transition:
+        box-shadow var(--duration-normal) var(--ease-decelerate),
+        transform var(--duration-normal) var(--ease-decelerate);
     animation-fill-mode: none;
 }
 .default-card:hover,
@@ -126,6 +159,7 @@
 .default-card img.bg {
     object-fit: cover;
     filter: var(--blur);
+    will-change: filter;
 }
 .default-card div.bg {
     background-color: #fffb;
@@ -182,16 +216,23 @@
 
 .list-card {
     display: flex;
-    transition: box-shadow linear 0.08s;
+    transition:
+        box-shadow var(--duration-normal) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate),
+        background-color var(--duration-normal) var(--ease-decelerate);
     border-bottom: 1px solid var(--neutralQuaternaryAlt);
     box-shadow: #0000 0 5px 15px;
 }
 .list-card:hover,
 .ms-Fabric--isFocusVisible .list-card:focus {
     box-shadow: #0004 0 5px 15px;
+    background-color: var(--white);
 }
 .list-card:active {
-    box-shadow: #0000 0 5px 15px, inset #0004 0 0 15px;
+    box-shadow:
+        #0000 0 5px 15px,
+        inset #0004 0 0 15px;
+    transform: scale(0.995);
 }
 .list-card div.head {
     width: 80px;
@@ -240,6 +281,17 @@
     position: absolute;
     height: 100%;
     border-left: 2px solid var(--primary);
+    animation: selected-expand var(--duration-normal, 200ms)
+        var(--ease-decelerate, cubic-bezier(0, 0, 0, 1)) both;
+    transform-origin: center;
+}
+@keyframes selected-expand {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
 }
 .list-card.read,
 .list-card.read p.snippet {
@@ -251,8 +303,10 @@
     padding: 24px;
     max-height: 160px;
     display: flex;
-    transition: box-shadow linear 0.08s, background-color linear 0.08s,
-        transform linear 0.08s;
+    transition:
+        box-shadow var(--duration-normal) var(--ease-decelerate),
+        background-color var(--duration-normal) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate);
     border-bottom: 1px solid var(--neutralQuaternaryAlt);
     box-shadow: #0000 0 5px 20px;
 }
@@ -266,7 +320,7 @@
 }
 .magazine-card:active {
     box-shadow: #0000 0 5px 20px;
-    transform: scale(0.97);
+    transform: scale(0.985);
     background-color: unset;
 }
 .magazine-card div.head {
@@ -319,7 +373,10 @@
     font-size: 14px;
     line-height: 31px;
     padding: 0 9px;
-    transition: box-shadow linear 0.08s, background-color linear 0.08s;
+    transition:
+        box-shadow var(--duration-normal) var(--ease-decelerate),
+        background-color var(--duration-normal) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate);
 }
 .compact-card:hover,
 .ms-Fabric--isFocusVisible .compact-card:focus {
@@ -328,6 +385,8 @@
 }
 .compact-card:active {
     box-shadow: #0000 0 0 10px;
+    transform: scale(0.997);
+    background-color: var(--neutralLighter);
 }
 .compact-card > * {
     margin: 0 3px;

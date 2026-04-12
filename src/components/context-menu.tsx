@@ -13,7 +13,12 @@ import {
     ContextualMenuItemType,
     DirectionalHint,
 } from "office-ui-fabric-react/lib/ContextualMenu"
-import { closeContextMenu, ContextMenuType } from "../scripts/models/app"
+import {
+    closeContextMenu,
+    ContextMenuType,
+    requestAIAsk,
+    AIContextMode,
+} from "../scripts/models/app"
 import {
     markAllRead,
     markRead,
@@ -215,14 +220,14 @@ function ItemContextMenu() {
                                   text: intl.get("context.showCover"),
                                   canCheck: true,
                                   checked: Boolean(
-                                      viewConfigs & ViewConfigs.ShowCover
+                                      viewConfigs & ViewConfigs.ShowCover,
                                   ),
                                   onClick: () =>
                                       dispatch(
                                           setViewConfigs(
                                               viewConfigs ^
-                                                  ViewConfigs.ShowCover
-                                          )
+                                                  ViewConfigs.ShowCover,
+                                          ),
                                       ),
                               },
                               {
@@ -230,14 +235,14 @@ function ItemContextMenu() {
                                   text: intl.get("context.showSnippet"),
                                   canCheck: true,
                                   checked: Boolean(
-                                      viewConfigs & ViewConfigs.ShowSnippet
+                                      viewConfigs & ViewConfigs.ShowSnippet,
                                   ),
                                   onClick: () =>
                                       dispatch(
                                           setViewConfigs(
                                               viewConfigs ^
-                                                  ViewConfigs.ShowSnippet
-                                          )
+                                                  ViewConfigs.ShowSnippet,
+                                          ),
                                       ),
                               },
                               {
@@ -245,13 +250,14 @@ function ItemContextMenu() {
                                   text: intl.get("context.fadeRead"),
                                   canCheck: true,
                                   checked: Boolean(
-                                      viewConfigs & ViewConfigs.FadeRead
+                                      viewConfigs & ViewConfigs.FadeRead,
                                   ),
                                   onClick: () =>
                                       dispatch(
                                           setViewConfigs(
-                                              viewConfigs ^ ViewConfigs.FadeRead
-                                          )
+                                              viewConfigs ^
+                                                  ViewConfigs.FadeRead,
+                                          ),
                                       ),
                               },
                           ],
@@ -264,9 +270,10 @@ function ItemContextMenu() {
 }
 
 function TextContextMenu() {
+    const dispatch = useAppDispatch()
     const target = useAppSelector(state => state.app.contextMenu.target) as [
         string,
-        string
+        string,
     ]
     const text = target[0]
     const url = target[1]
@@ -281,6 +288,26 @@ function TextContextMenu() {
                   },
               },
               getSearchItem(text),
+              {
+                  key: "divider_ai",
+                  itemType: ContextualMenuItemType.Divider,
+              },
+              {
+                  key: "askAIWithArticle",
+                  text: intl.get("context.askAIWithArticle"),
+                  iconProps: { iconName: "ChatBot" },
+                  onClick: () => {
+                      dispatch(requestAIAsk(AIContextMode.FullArticle, text))
+                  },
+              },
+              {
+                  key: "askAIWithSelection",
+                  text: intl.get("context.askAIWithSelection"),
+                  iconProps: { iconName: "Chat" },
+                  onClick: () => {
+                      dispatch(requestAIAsk(AIContextMode.SelectionOnly, text))
+                  },
+              },
           ]
         : []
     if (url) {
@@ -324,7 +351,7 @@ function ImageContextMenu() {
             onClick: e => {
                 if (platformCtrl(e)) {
                     window.utils.imageCallback(
-                        ImageCallbackTypes.OpenExternalBg
+                        ImageCallbackTypes.OpenExternalBg,
                     )
                 } else {
                     window.utils.imageCallback(ImageCallbackTypes.OpenExternal)
@@ -504,7 +531,7 @@ function ViewContextMenu() {
 function GroupContextMenu() {
     const dispatch = useAppDispatch()
     const sids = useAppSelector(
-        state => state.app.contextMenu.target
+        state => state.app.contextMenu.target,
     ) as number[]
 
     const menuItems: IContextualMenuItem[] = [

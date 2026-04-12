@@ -32,7 +32,7 @@ export interface ServiceHooks {
     markAllRead?: (
         sids?: number[],
         date?: Date,
-        before?: boolean
+        before?: boolean,
     ) => AppThunk<Promise<void>>
     star?: (item: RSSItem) => AppThunk
     unstar?: (item: RSSItem) => AppThunk
@@ -104,7 +104,7 @@ function reauthenticate(hooks: ServiceHooks): AppThunk<Promise<void>> {
 }
 
 function updateSources(
-    hook: ServiceHooks["updateSources"]
+    hook: ServiceHooks["updateSources"],
 ): AppThunk<Promise<void>> {
     return async (dispatch, getState) => {
         const [sources, groupsMap] = await dispatch(hook())
@@ -167,7 +167,7 @@ function updateSources(
             for (let source of sourcesResults) {
                 if (groupsMap.has(source.serviceRef)) {
                     const gid = dispatch(
-                        createSourceGroup(groupsMap.get(source.serviceRef))
+                        createSourceGroup(groupsMap.get(source.serviceRef)),
                     )
                     dispatch(addSourceToGroup(gid, source.sid))
                 }
@@ -193,9 +193,9 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
                     db.items.serviceRef.isNotNull(),
                     lf.op.or(
                         db.items.hasRead.eq(false),
-                        db.items.starred.eq(true)
-                    )
-                )
+                        db.items.starred.eq(true),
+                    ),
+                ),
             )
             .exec()
         const updates = new Array<lf.query.Update>()
@@ -206,7 +206,7 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
                     db.itemsDB
                         .update(db.items)
                         .set(db.items.hasRead, true)
-                        .where(db.items.serviceRef.eq(serviceRef))
+                        .where(db.items.serviceRef.eq(serviceRef)),
                 )
             }
             if (row["starred"] === true && !starredRefs.delete(serviceRef)) {
@@ -214,7 +214,7 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
                     db.itemsDB
                         .update(db.items)
                         .set(db.items.starred, false)
-                        .where(db.items.serviceRef.eq(serviceRef))
+                        .where(db.items.serviceRef.eq(serviceRef)),
                 )
             }
         }
@@ -223,7 +223,7 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
                 db.itemsDB
                     .update(db.items)
                     .set(db.items.hasRead, false)
-                    .where(db.items.serviceRef.eq(unread))
+                    .where(db.items.serviceRef.eq(unread)),
             )
         }
         for (let starred of starredRefs) {
@@ -231,7 +231,7 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
                 db.itemsDB
                     .update(db.items)
                     .set(db.items.starred, true)
-                    .where(db.items.serviceRef.eq(starred))
+                    .where(db.items.serviceRef.eq(starred)),
             )
         }
         if (updates.length > 0) {
@@ -244,7 +244,7 @@ function syncItems(hook: ServiceHooks["syncItems"]): AppThunk<Promise<void>> {
 
 function fetchItems(
     hook: ServiceHooks["fetchItems"],
-    background: boolean
+    background: boolean,
 ): AppThunk<Promise<void>> {
     return async (dispatch, getState) => {
         const [items, configs] = await dispatch(hook())
@@ -327,7 +327,7 @@ export function saveServiceConfigs(configs: ServiceConfigs): AppThunk {
 
 function syncLocalItems(
     unread: Set<string>,
-    starred: Set<string>
+    starred: Set<string>,
 ): ServiceActionTypes {
     return {
         type: SYNC_LOCAL_ITEMS,
@@ -338,7 +338,7 @@ function syncLocalItems(
 
 export function serviceReducer(
     state = window.settings.getServiceConfigs(),
-    action: ServiceActionTypes
+    action: ServiceActionTypes,
 ): ServiceConfigs {
     switch (action.type) {
         case SAVE_SERVICE_CONFIGS:

@@ -231,5 +231,32 @@
         "pacHint": "Socks 프록시의 경우에는 PAC이 프록시측 DNS에 \"SOCKS5\"를 리턴하는 것을 권장합니다.. 재시작하려면 프록시를 종료해야 합니다.",
         "fetchInterval": "피드를 불러오는 간격",
         "never": "하지 않음"
+    },
+    "ai": {
+        "name": "AI Assistant",
+        "provider": "Provider",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "model": "Model",
+        "prompts": "Preset Prompts",
+        "promptName": "Prompt name",
+        "promptContent": "Prompt content",
+        "addPrompt": "Add",
+        "deletePrompt": "Delete",
+        "askAI": "Ask AI",
+        "send": "Send",
+        "stop": "Stop",
+        "thinking": "Thinking...",
+        "error": "Error",
+        "noConfig": "AI is not configured. Please go to Settings to set up your AI provider.",
+        "inputPlaceholder": "Ask a question about this article...",
+        "clearHistory": "Clear history",
+        "confirmClearHistory": "Clear chat history?",
+        "confirmClearHistorySubtitle": "This will remove all chat messages for this article.",
+        "copyMessage": "Copy",
+        "copied": "Copied"
     }
 }

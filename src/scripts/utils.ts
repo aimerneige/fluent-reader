@@ -83,7 +83,7 @@ export async function parseRSS(url: string) {
     if (result && result.ok) {
         try {
             return await rssParser.parseString(
-                await decodeFetchResponse(result)
+                await decodeFetchResponse(result),
             )
         } catch {
             throw new Error(intl.get("log.parseError"))
@@ -151,7 +151,7 @@ export function htmlDecode(input: string) {
 
 export const urlTest = (s: string) =>
     /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,63}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi.test(
-        s
+        s,
     )
 
 export const getWindowBreakpoint = () => window.outerWidth >= 1440
@@ -176,19 +176,19 @@ export function webSearch(text: string, engine = SearchEngines.Google) {
     switch (engine) {
         case SearchEngines.Google:
             return window.utils.openExternal(
-                "https://www.google.com/search?q=" + encodeURIComponent(text)
+                "https://www.google.com/search?q=" + encodeURIComponent(text),
             )
         case SearchEngines.Bing:
             return window.utils.openExternal(
-                "https://www.bing.com/search?q=" + encodeURIComponent(text)
+                "https://www.bing.com/search?q=" + encodeURIComponent(text),
             )
         case SearchEngines.Baidu:
             return window.utils.openExternal(
-                "https://www.baidu.com/s?wd=" + encodeURIComponent(text)
+                "https://www.baidu.com/s?wd=" + encodeURIComponent(text),
             )
         case SearchEngines.DuckDuckGo:
             return window.utils.openExternal(
-                "https://duckduckgo.com/?q=" + encodeURIComponent(text)
+                "https://duckduckgo.com/?q=" + encodeURIComponent(text),
             )
     }
 }
@@ -196,7 +196,7 @@ export function webSearch(text: string, engine = SearchEngines.Google) {
 export function mergeSortedArrays<T>(
     a: T[],
     b: T[],
-    cmp: (x: T, y: T) => number
+    cmp: (x: T, y: T) => number,
 ): T[] {
     let merged = new Array<T>()
     let i = 0
@@ -260,8 +260,15 @@ export function validateRegex(regex: string, flags = ""): RegExp {
     }
 }
 
+export function htmlToPlainText(html: string): string {
+    const div = document.createElement("div")
+    div.innerHTML = html
+    div.querySelectorAll("script, style, noscript").forEach(el => el.remove())
+    return (div.textContent || "").replace(/\n{3,}/g, "\n\n").trim()
+}
+
 export function platformCtrl(
-    e: React.MouseEvent | React.KeyboardEvent | MouseEvent | KeyboardEvent
+    e: React.MouseEvent | React.KeyboardEvent | MouseEvent | KeyboardEvent,
 ) {
     return window.utils.platform === "darwin" ? e.metaKey : e.ctrlKey
 }

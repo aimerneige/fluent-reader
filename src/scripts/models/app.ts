@@ -36,6 +36,11 @@ import { getCurrentLocale, setThemeDefaultFont } from "../settings"
 import locales from "../i18n/_locales"
 import { SYNC_SERVICE, ServiceActionTypes } from "./service"
 
+export const enum AIContextMode {
+    FullArticle,
+    SelectionOnly,
+}
+
 export const enum ContextMenuType {
     Hidden,
     Item,
@@ -64,7 +69,7 @@ export class AppLog {
         type: AppLogType,
         title: string,
         details: string = null,
-        iid: number = null
+        iid: number = null,
     ) {
         this.type = type
         this.title = title
@@ -105,9 +110,18 @@ export class AppState {
         target?: [RSSItem, string] | number[] | [string, string]
     }
 
+    aiRequest: {
+        active: boolean
+        mode?: AIContextMode
+        selectedText?: string
+    }
+
     constructor() {
         this.contextMenu = {
             type: ContextMenuType.Hidden,
+        }
+        this.aiRequest = {
+            active: false,
         }
     }
 }
@@ -167,6 +181,8 @@ export type ContextMenuActionTypes =
 
 export const TOGGLE_LOGS = "TOGGLE_LOGS"
 export const PUSH_NOTIFICATION = "PUSH_NOTIFICATION"
+export const REQUEST_AI_ASK = "REQUEST_AI_ASK"
+export const CLEAR_AI_REQUEST = "CLEAR_AI_REQUEST"
 
 interface ToggleLogMenuAction {
     type: typeof TOGGLE_LOGS
@@ -179,7 +195,19 @@ interface PushNotificationAction {
     source: string
 }
 
+interface RequestAIAskAction {
+    type: typeof REQUEST_AI_ASK
+    mode: AIContextMode
+    selectedText: string
+}
+
+interface ClearAIRequestAction {
+    type: typeof CLEAR_AI_REQUEST
+}
+
 export type LogMenuActionType = ToggleLogMenuAction | PushNotificationAction
+
+export type AIRequestActionTypes = RequestAIAskAction | ClearAIRequestAction
 
 export const TOGGLE_MENU = "TOGGLE_MENU"
 
@@ -219,7 +247,7 @@ export function closeContextMenu(): AppThunk {
 export function openItemMenu(
     item: RSSItem,
     feedId: string,
-    event: React.MouseEvent
+    event: React.MouseEvent,
 ): ContextMenuActionTypes {
     return {
         type: OPEN_ITEM_MENU,
@@ -232,7 +260,7 @@ export function openItemMenu(
 export function openTextMenu(
     position: [number, number],
     text: string,
-    url: string = null
+    url: string = null,
 ): ContextMenuActionTypes {
     return {
         type: OPEN_TEXT_MENU,
@@ -247,7 +275,7 @@ export const openViewMenu = (): ContextMenuActionTypes => ({
 
 export function openGroupMenu(
     sids: number[],
-    event: React.MouseEvent
+    event: React.MouseEvent,
 ): ContextMenuActionTypes {
     return {
         type: OPEN_GROUP_MENU,
@@ -257,7 +285,7 @@ export function openGroupMenu(
 }
 
 export function openImageMenu(
-    position: [number, number]
+    position: [number, number],
 ): ContextMenuActionTypes {
     return {
         type: OPEN_IMAGE_MENU,
@@ -278,6 +306,23 @@ export function toggleMenu(): AppThunk {
 
 export const toggleLogMenu = () => ({ type: TOGGLE_LOGS })
 export const saveSettings = () => ({ type: SAVE_SETTINGS })
+
+export function requestAIAsk(
+    mode: AIContextMode,
+    selectedText: string,
+): RequestAIAskAction {
+    return {
+        type: REQUEST_AI_ASK,
+        mode: mode,
+        selectedText: selectedText,
+    }
+}
+
+export function clearAIRequest(): ClearAIRequestAction {
+    return {
+        type: CLEAR_AI_REQUEST,
+    }
+}
 
 export const toggleSettings = (open = true, sids = new Array<number>()) => ({
     type: TOGGLE_SETTINGS,
@@ -426,6 +471,7 @@ export function appReducer(
         | PageActionTypes
         | SourceGroupActionTypes
         | ServiceActionTypes
+        | AIRequestActionTypes,
 ): AppState {
     switch (action.type) {
         case INIT_INTL:
@@ -508,7 +554,7 @@ export function appReducer(
                                 new AppLog(
                                     AppLogType.Failure,
                                     intl.get("log.syncFailure"),
-                                    String(action.err)
+                                    String(action.err),
                                 ),
                             ],
                         },
@@ -541,7 +587,7 @@ export function appReducer(
                                     intl.get("log.fetchFailure", {
                                         name: action.errSource.name,
                                     }),
-                                    String(action.err)
+                                    String(action.err),
                                 ),
                             ],
                         },
@@ -562,7 +608,7 @@ export function appReducer(
                                               AppLogType.Info,
                                               intl.get("log.fetchSuccess", {
                                                   count: action.items.length,
-                                              })
+                                              }),
                                           ),
                                       ],
                                   },
@@ -702,9 +748,25 @@ export function appReducer(
                             AppLogType.Article,
                             action.title,
                             action.source,
-                            action.iid
+                            action.iid,
                         ),
                     ],
+                },
+            }
+        case REQUEST_AI_ASK:
+            return {
+                ...state,
+                aiRequest: {
+                    active: true,
+                    mode: action.mode,
+                    selectedText: action.selectedText,
+                },
+            }
+        case CLEAR_AI_REQUEST:
+            return {
+                ...state,
+                aiRequest: {
+                    active: false,
                 },
             }
         default:

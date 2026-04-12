@@ -20,6 +20,64 @@
     --navHeight: 32px;
     --transition-timing: cubic-bezier(0.1, 0.9, 0.2, 1);
     --blur: saturate(150%) blur(20px);
+    --duration-fast: 100ms;
+    --duration-normal: 200ms;
+    --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+    --ease-accelerate: cubic-bezier(1, 0, 1, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== Low Performance Mode ===== */
+body.perf-low,
+body.perf-low *,
+body.perf-low *::before,
+body.perf-low *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+}
+body.perf-low {
+    --blur: none;
+}
+body.perf-low .article-container {
+    backdrop-filter: none !important;
+}
+body.perf-low .menu-container .menu {
+    backdrop-filter: none !important;
+}
+body.perf-low .default-card img.bg {
+    filter: none !important;
+}
+body.perf-low .default-card:hover,
+body.perf-low .list-card:hover,
+body.perf-low .magazine-card:hover,
+body.perf-low .compact-card:hover {
+    box-shadow: none !important;
+}
+body.perf-low .default-card:active,
+body.perf-low .list-card:active,
+body.perf-low .magazine-card:active,
+body.perf-low .compact-card:active {
+    transform: none !important;
+}
+body.perf-low .btn-group .btn:active {
+    transform: none !important;
+}
+body.perf-low .settings-container {
+    animation: none !important;
+}
+body.perf-low .ms-Callout-main {
+    animation: none !important;
 }
 @media (prefers-color-scheme: dark) {
     :root {
@@ -55,20 +113,21 @@ body {
     margin: 0;
 }
 body:lang(zh-CN) {
-    font-family: "Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei",
-        sans-serif;
+    font-family:
+        "Segoe UI", "Source Han Sans SC Regular", "Microsoft YaHei", sans-serif;
 }
 body:lang(zh-TW) {
-    font-family: "Segoe UI", "Source Han Sans TC Regular", "Microsoft JhengHei",
+    font-family:
+        "Segoe UI", "Source Han Sans TC Regular", "Microsoft JhengHei",
         sans-serif;
 }
 body:lang(ja) {
-    font-family: "Segoe UI", "Source Han Sans JP Regular", "Yu Gothic UI",
-        sans-serif;
+    font-family:
+        "Segoe UI", "Source Han Sans JP Regular", "Yu Gothic UI", sans-serif;
 }
 body:lang(ko) {
-    font-family: "Segoe UI", "Source Han Sans KR Regular", "Malgun Gothic",
-        sans-serif;
+    font-family:
+        "Segoe UI", "Source Han Sans KR Regular", "Malgun Gothic", sans-serif;
 }
 body.win32,
 body.linux {
@@ -95,10 +154,14 @@ body.linux {
     height: 32px;
     background-color: transparent;
     color: var(--neutralPrimary);
+    transition: background-color var(--duration-fast) var(--ease-decelerate);
 }
 .ms-Button--primary.danger {
     background: #d13438;
     border-color: #d13438;
+    transition:
+        background-color var(--duration-fast) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate);
 }
 .ms-Button--primary.danger:hover {
     background: #ba2d32;
@@ -107,6 +170,7 @@ body.linux {
 .ms-Button--primary.danger:active {
     background: #a4262c;
     border-color: #a4262c;
+    transform: scale(0.96);
 }
 .ms-Button--primary.danger.is-disabled {
     background: var(--neutralLighter);
@@ -115,6 +179,12 @@ body.linux {
 .ms-Button--commandBar.active {
     background-color: var(--neutralLight);
     color: var(--neutralDark);
+    transition:
+        background-color var(--duration-fast) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate);
+}
+.ms-Button--commandBar.active:active {
+    transform: scale(0.96);
 }
 .ms-Button--commandBar.active .ms-Button-icon {
     color: #005a9e;
@@ -155,6 +225,18 @@ i.ms-Nav-chevron {
 
 .ms-Callout-main {
     border-radius: 5px;
+    animation: callout-fade-in var(--duration-normal) var(--ease-decelerate)
+        both;
+}
+@keyframes callout-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 #root > nav {
@@ -231,6 +313,9 @@ body.darwin .btn-group .seperator {
     color: var(--black);
     font-size: 14px;
     vertical-align: top;
+    transition:
+        background-color var(--duration-fast) var(--ease-decelerate),
+        transform var(--duration-fast) var(--ease-decelerate);
 }
 #root > nav .btn-group .btn,
 .menu .btn-group .btn {
@@ -260,6 +345,7 @@ nav.item-on .btn-group .btn.system {
 .btn-group .btn:active,
 .ms-Nav-compositeLink:active {
     background-color: #0002;
+    transform: scale(0.92);
 }
 .ms-Nav-compositeLink:hover .ms-Nav-link {
     background: none;
@@ -268,6 +354,8 @@ nav.item-on .btn-group .btn.system {
 .btn-group .btn.fetching {
     background-color: unset !important;
     color: var(--neutralSecondaryAlt);
+    cursor: not-allowed;
+    transform: none !important;
 }
 .btn-group .btn.fetching {
     animation: rotating linear 1.5s infinite;
@@ -287,6 +375,7 @@ nav.item-on .btn-group .btn.system {
 .btn-group .btn.close:active {
     background-color: #f1707a;
     color: var(--whiteConstant) !important;
+    transform: scale(0.92);
 }
 .btn-group .btn.inline-block-wide {
     display: none;

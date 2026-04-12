@@ -32,7 +32,7 @@ async function fetchAPI(
     configs: GReaderConfigs,
     params: string,
     method = "GET",
-    body: BodyInit = null
+    body: BodyInit = null,
 ) {
     const headers = new Headers()
     if (configs.auth !== null) headers.set("Authorization", configs.auth)
@@ -54,7 +54,7 @@ async function fetchAPI(
 
 async function fetchAll(
     configs: GReaderConfigs,
-    params: string
+    params: string,
 ): Promise<Set<string>> {
     let results = new Array()
     let fetched: any[]
@@ -79,7 +79,7 @@ async function editTag(
     configs: GReaderConfigs,
     ref: string,
     tag: string,
-    add = true
+    add = true,
 ) {
     const body = new URLSearchParams(`i=${ref}&${add ? "a" : "r"}=${tag}`)
     return await fetchAPI(configs, "/reader/api/0/edit-tag", "POST", body)
@@ -101,7 +101,7 @@ export const gReaderServiceHooks: ServiceHooks = {
             try {
                 const result = await fetchAPI(
                     configs,
-                    "/reader/api/0/user-info"
+                    "/reader/api/0/user-info",
                 )
                 return result.status === 200
             } catch {
@@ -111,7 +111,7 @@ export const gReaderServiceHooks: ServiceHooks = {
     },
 
     reauthenticate: async (
-        configs: GReaderConfigs
+        configs: GReaderConfigs,
     ): Promise<GReaderConfigs> => {
         const body = new URLSearchParams()
         body.append("Email", configs.username)
@@ -120,7 +120,7 @@ export const gReaderServiceHooks: ServiceHooks = {
             configs,
             "/accounts/ClientLogin",
             "POST",
-            body
+            body,
         )
         if (result.status === 200) {
             const text = await result.text()
@@ -137,7 +137,7 @@ export const gReaderServiceHooks: ServiceHooks = {
         const configs = getState().service as GReaderConfigs
         const response = await fetchAPI(
             configs,
-            "/reader/api/0/subscription/list?output=json"
+            "/reader/api/0/subscription/list?output=json",
         )
         if (response.status !== 200) throw APIError()
         const subscriptions: any[] = (await response.json()).subscriptions
@@ -177,22 +177,22 @@ export const gReaderServiceHooks: ServiceHooks = {
             return await Promise.all([
                 fetchAll(
                     configs,
-                    `/reader/api/0/stream/items/ids?output=json&xt=${READ_TAG}&n=1000`
+                    `/reader/api/0/stream/items/ids?output=json&xt=${READ_TAG}&n=1000`,
                 ),
                 fetchAll(
                     configs,
-                    `/reader/api/0/stream/items/ids?output=json&it=${STAR_TAG}&n=1000`
+                    `/reader/api/0/stream/items/ids?output=json&it=${STAR_TAG}&n=1000`,
                 ),
             ])
         } else {
             return await Promise.all([
                 fetchAll(
                     configs,
-                    `/reader/api/0/stream/items/ids?output=json&s=${ALL_TAG}&xt=${READ_TAG}&n=1000`
+                    `/reader/api/0/stream/items/ids?output=json&s=${ALL_TAG}&xt=${READ_TAG}&n=1000`,
                 ),
                 fetchAll(
                     configs,
-                    `/reader/api/0/stream/items/ids?output=json&s=${STAR_TAG}&n=1000`
+                    `/reader/api/0/stream/items/ids?output=json&s=${STAR_TAG}&n=1000`,
                 ),
             ])
         }
@@ -243,7 +243,7 @@ export const gReaderServiceHooks: ServiceHooks = {
                 if (source === undefined) return
                 const dom = domParser.parseFromString(
                     i.summary.content,
-                    "text/html"
+                    "text/html",
                 )
                 if (
                     configs.type == SyncService.Inoreader &&
@@ -275,7 +275,7 @@ export const gReaderServiceHooks: ServiceHooks = {
                 const baseEl = dom.createElement("base")
                 baseEl.setAttribute(
                     "href",
-                    item.link.split("/").slice(0, 3).join("/")
+                    item.link.split("/").slice(0, 3).join("/"),
                 )
                 dom.head.append(baseEl)
                 let img = dom.querySelector("img")
@@ -301,21 +301,21 @@ export const gReaderServiceHooks: ServiceHooks = {
                             configs,
                             item.serviceRef,
                             READ_TAG,
-                            item.hasRead
+                            item.hasRead,
                         )
                     if (item.starred !== starred)
                         editTag(
                             configs,
                             item.serviceRef,
                             STAR_TAG,
-                            item.starred
+                            item.starred,
                         )
                 }
                 parsedItems.push(item)
             })
             if (parsedItems.length > 0) {
                 configs.lastFetched = Math.round(
-                    parsedItems[0].fetchedDate.getTime() / 1000
+                    parsedItems[0].fetchedDate.getTime() / 1000,
                 )
             }
             return [parsedItems, configs]
@@ -335,7 +335,7 @@ export const gReaderServiceHooks: ServiceHooks = {
             ]
             if (date) {
                 predicates.push(
-                    before ? db.items.date.lte(date) : db.items.date.gte(date)
+                    before ? db.items.date.lte(date) : db.items.date.gte(date),
                 )
             }
             const query = lf.op.and.apply(null, predicates)
@@ -358,7 +358,7 @@ export const gReaderServiceHooks: ServiceHooks = {
                         configs,
                         "/reader/api/0/mark-all-as-read",
                         "POST",
-                        body
+                        body,
                     )
                 }
             }
@@ -369,7 +369,7 @@ export const gReaderServiceHooks: ServiceHooks = {
         await editTag(
             getState().service as GReaderConfigs,
             item.serviceRef,
-            READ_TAG
+            READ_TAG,
         )
     },
 
@@ -378,7 +378,7 @@ export const gReaderServiceHooks: ServiceHooks = {
             getState().service as GReaderConfigs,
             item.serviceRef,
             READ_TAG,
-            false
+            false,
         )
     },
 
@@ -386,7 +386,7 @@ export const gReaderServiceHooks: ServiceHooks = {
         await editTag(
             getState().service as GReaderConfigs,
             item.serviceRef,
-            STAR_TAG
+            STAR_TAG,
         )
     },
 
@@ -395,7 +395,7 @@ export const gReaderServiceHooks: ServiceHooks = {
             getState().service as GReaderConfigs,
             item.serviceRef,
             STAR_TAG,
-            false
+            false,
         )
     },
 }

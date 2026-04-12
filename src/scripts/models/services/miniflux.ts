@@ -56,7 +56,7 @@ async function fetchAPI(
     configs: MinifluxConfigs,
     endpoint: string = "",
     method: string = "GET",
-    body: string = null
+    body: string = null,
 ): Promise<Response> {
     try {
         const headers = new Headers()
@@ -100,7 +100,7 @@ export const minifluxServiceHooks: ServiceHooks = {
         if (configs.importGroups) {
             const groups: Category[] = await fetchAPI(
                 configs,
-                "categories"
+                "categories",
             ).then(response => response.json())
             groups.forEach(group => dispatch(createSourceGroup(group.title)))
         }
@@ -147,12 +147,12 @@ export const minifluxServiceHooks: ServiceHooks = {
                 if (continueId) {
                     entriesResponse = await fetchAPI(
                         configs,
-                        `entries?order=id&direction=desc&after_entry_id=${configs.lastId}&before_entry_id=${continueId}&limit=${quantity}`
+                        `entries?order=id&direction=desc&after_entry_id=${configs.lastId}&before_entry_id=${continueId}&limit=${quantity}`,
                     ).then(response => response.json())
                 } else {
                     entriesResponse = await fetchAPI(
                         configs,
-                        `entries?order=id&direction=desc&after_entry_id=${configs.lastId}&limit=${quantity}`
+                        `entries?order=id&direction=desc&after_entry_id=${configs.lastId}&limit=${quantity}`,
                     ).then(response => response.json())
                 }
 
@@ -204,7 +204,7 @@ export const minifluxServiceHooks: ServiceHooks = {
             let baseEl = dom.createElement("base")
             baseEl.setAttribute(
                 "href",
-                parsedItem.link.split("/").slice(0, 3).join("/")
+                parsedItem.link.split("/").slice(0, 3).join("/"),
             )
             dom.head.append(baseEl)
             let img = dom.querySelector("img")
@@ -230,11 +230,11 @@ export const minifluxServiceHooks: ServiceHooks = {
 
         const unreadPromise: Promise<Entries> = fetchAPI(
             configs,
-            "entries?status=unread"
+            "entries?status=unread",
         ).then(response => response.json())
         const starredPromise: Promise<Entries> = fetchAPI(
             configs,
-            "entries?starred=true"
+            "entries?starred=true",
         ).then(response => response.json())
         const [unread, starred] = await Promise.all([
             unreadPromise,
@@ -259,7 +259,7 @@ export const minifluxServiceHooks: ServiceHooks = {
             getState().service as MinifluxConfigs,
             "entries",
             "PUT",
-            body
+            body,
         )
 
         if (response.status !== 204) throw APIError()
@@ -276,7 +276,7 @@ export const minifluxServiceHooks: ServiceHooks = {
             getState().service as MinifluxConfigs,
             "entries",
             "PUT",
-            body
+            body,
         )
     },
 
@@ -319,9 +319,9 @@ export const minifluxServiceHooks: ServiceHooks = {
                     fetchAPI(
                         configs,
                         `feeds/${sources[sid]?.serviceRef}/mark-all-as-read`,
-                        "PUT"
-                    )
-                )
+                        "PUT",
+                    ),
+                ),
             )
         }
     },
@@ -332,7 +332,7 @@ export const minifluxServiceHooks: ServiceHooks = {
         await fetchAPI(
             getState().service as MinifluxConfigs,
             `entries/${item.serviceRef}/bookmark`,
-            "PUT"
+            "PUT",
         )
     },
 
@@ -342,7 +342,7 @@ export const minifluxServiceHooks: ServiceHooks = {
         await fetchAPI(
             getState().service as MinifluxConfigs,
             `entries/${item.serviceRef}/bookmark`,
-            "PUT"
+            "PUT",
         )
     },
 }

@@ -3,6 +3,7 @@ import { ThemeSettings, SchemaTypes } from "./schema-types"
 import { store } from "./main/settings"
 import performUpdate from "./main/update-scripts"
 import { WindowManager } from "./main/window"
+import "./main/cache-manager"
 
 if (!process.mas) {
     const locked = app.requestSingleInstanceLock()
@@ -133,6 +134,6 @@ ipcMain.handle("import-all-settings", (_, configs: SchemaTypes) => {
         () => {
             winManager.mainWindow.close()
         },
-        process.platform === "darwin" ? 1000 : 0
+        process.platform === "darwin" ? 1000 : 0,
     ) // Why ???
 })

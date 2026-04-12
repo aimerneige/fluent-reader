@@ -17,13 +17,26 @@ const DefaultCard: React.FunctionComponent<Card.Props> = props => (
         className={className(props)}
         {...Card.bindEventsToProps(props)}
         data-iid={props.item._id}
-        data-is-focusable>
+        data-is-focusable
+    >
         {props.item.thumb ? (
-            <img className="bg" src={props.item.thumb} />
+            <img
+                className="bg"
+                src={props.item.thumb}
+                loading="lazy"
+                decoding="async"
+                onError={e => (e.currentTarget.style.display = "none")}
+            />
         ) : null}
         <div className="bg"></div>
         {props.item.thumb ? (
-            <img className="head" src={props.item.thumb} />
+            <img
+                className="head"
+                src={props.item.thumb}
+                loading="lazy"
+                decoding="async"
+                onError={e => (e.currentTarget.style.display = "none")}
+            />
         ) : null}
         <CardInfo source={props.source} item={props.item} />
         <h3 className="title">

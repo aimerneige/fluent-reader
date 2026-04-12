@@ -79,7 +79,8 @@ class ListFeed extends React.Component<FeedProps> {
                     direction={FocusZoneDirection.vertical}
                     className={this.getClassName()}
                     shouldReceiveFocus={this.canFocusChild}
-                    data-is-scrollable>
+                    data-is-scrollable
+                >
                     <List
                         className={AnimationClassNames.slideUpIn10}
                         items={this.props.items}

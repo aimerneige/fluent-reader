@@ -8,10 +8,15 @@ import {
 } from "../../scripts/utils"
 import { ThemeSettings, SearchEngines } from "../../schema-types"
 import {
+    SourceOpenTarget,
+    setDefaultOpenTargetCached,
+} from "../../scripts/models/source"
+import {
     getThemeSettings,
     setThemeSettings,
     exportAll,
 } from "../../scripts/settings"
+import { applyLowPerformance } from "../../scripts/performance"
 import {
     Stack,
     Label,
@@ -25,21 +30,28 @@ import {
     PrimaryButton,
 } from "@fluentui/react"
 import DangerButton from "../utils/danger-button"
+import ArchiveManager from "./archive"
 
 type AppTabProps = {
     setLanguage: (option: string) => void
     setFetchInterval: (interval: number) => void
     deleteArticles: (days: number) => Promise<void>
     importAll: () => Promise<void>
+    cacheAllExistingArticles: () => Promise<void>
 }
 
 type AppTabState = {
     pacStatus: boolean
     pacUrl: string
     themeSettings: ThemeSettings
+    lowPerformance: boolean
+    aggressiveCache: boolean
+    openTarget: SourceOpenTarget
     itemSize: string
     cacheSize: string
+    articleCacheSize: string
     deleteIndex: string
+    showArchiveManager: boolean
 }
 
 class AppTab extends React.Component<AppTabProps, AppTabState> {
@@ -49,12 +61,18 @@ class AppTab extends React.Component<AppTabProps, AppTabState> {
             pacStatus: window.settings.getProxyStatus(),
             pacUrl: window.settings.getProxy(),
             themeSettings: getThemeSettings(),
+            lowPerformance: window.settings.getLowPerformance(),
+            aggressiveCache: window.settings.getAggressiveCache(),
+            openTarget: window.settings.getDefaultOpenTarget(),
             itemSize: null,
             cacheSize: null,
+            articleCacheSize: null,
             deleteIndex: null,
+            showArchiveManager: false,
         }
         this.getItemSize()
         this.getCacheSize()
+        this.getArticleCacheSize()
     }
 
     getCacheSize = () => {
@@ -105,6 +123,31 @@ class AppTab extends React.Component<AppTabProps, AppTabState> {
         }))
     onSearchEngineChanged = (item: IDropdownOption) => {
         window.settings.setSearchEngine(item.key as number)
+    }
+
+    openTargetChoices = (): IChoiceGroupOption[] => [
+        {
+            key: String(SourceOpenTarget.Local),
+            text: intl.get("sources.rssText"),
+        },
+        {
+            key: String(SourceOpenTarget.FullContent),
+            text: intl.get("article.loadFull"),
+        },
+        {
+            key: String(SourceOpenTarget.Webpage),
+            text: intl.get("sources.loadWebpage"),
+        },
+        {
+            key: String(SourceOpenTarget.External),
+            text: intl.get("openExternal"),
+        },
+    ]
+    onOpenTargetChange = (_, option: IChoiceGroupOption) => {
+        let target = parseInt(option.key) as SourceOpenTarget
+        window.settings.setDefaultOpenTarget(target)
+        setDefaultOpenTargetCached(target)
+        this.setState({ openTarget: target })
     }
 
     deleteOptions = (): IDropdownOption[] => [
@@ -173,6 +216,41 @@ class AppTab extends React.Component<AppTabProps, AppTabState> {
         this.setState({ themeSettings: option.key as ThemeSettings })
     }
 
+    toggleLowPerformance = () => {
+        let flag = !this.state.lowPerformance
+        window.settings.setLowPerformance(flag)
+        applyLowPerformance(flag)
+        this.setState({ lowPerformance: flag })
+    }
+
+    toggleAggressiveCache = () => {
+        let flag = !this.state.aggressiveCache
+        window.settings.setAggressiveCache(flag)
+        this.setState({ aggressiveCache: flag })
+        if (flag) {
+            // When enabling, cache all existing articles in background
+            this.props.cacheAllExistingArticles().catch(e => {
+                console.error("Bulk cache error:", e)
+            })
+        }
+    }
+
+    getArticleCacheSize = () => {
+        window.utils.getArticleCacheSize().then(size => {
+            this.setState({ articleCacheSize: byteToMB(size) })
+        })
+    }
+
+    clearArticleCache = () => {
+        window.utils.clearArticleCache().then(() => {
+            this.getArticleCacheSize()
+        })
+    }
+
+    toggleArchiveManager = () => {
+        this.setState({ showArchiveManager: !this.state.showArchiveManager })
+    }
+
     render = () => (
         <div className="tab-body">
             <Label>{intl.get("app.language")}</Label>
@@ -195,6 +273,58 @@ class AppTab extends React.Component<AppTabProps, AppTabState> {
                 onChange={this.onThemeChange}
                 selectedKey={this.state.themeSettings}
             />
+
+            <Stack horizontal verticalAlign="baseline">
+                <Stack.Item grow>
+                    <Label>{intl.get("app.lowPerformance")}</Label>
+                </Stack.Item>
+                <Stack.Item>
+                    <Toggle
+                        checked={this.state.lowPerformance}
+                        onChange={this.toggleLowPerformance}
+                    />
+                </Stack.Item>
+            </Stack>
+            <span className="settings-hint up">
+                {intl.get("app.lowPerformanceHint")}
+            </span>
+
+            <Stack horizontal verticalAlign="baseline">
+                <Stack.Item grow>
+                    <Label>{intl.get("app.aggressiveCache")}</Label>
+                </Stack.Item>
+                <Stack.Item>
+                    <Toggle
+                        checked={this.state.aggressiveCache}
+                        onChange={this.toggleAggressiveCache}
+                    />
+                </Stack.Item>
+            </Stack>
+            <span className="settings-hint up">
+                {intl.get("app.aggressiveCacheHint")}
+            </span>
+            {this.state.aggressiveCache && (
+                <>
+                    <Stack horizontal tokens={{ childrenGap: 8 }}>
+                        <Stack.Item>
+                            <DefaultButton
+                                text={intl.get("app.archiveManager")}
+                                onClick={this.toggleArchiveManager}
+                            />
+                        </Stack.Item>
+                    </Stack>
+                    <span className="settings-hint up">
+                        {this.state.articleCacheSize
+                            ? intl.get("app.articleCacheSize", {
+                                  size: this.state.articleCacheSize,
+                              })
+                            : intl.get("app.calculatingSize")}
+                    </span>
+                    {this.state.showArchiveManager && (
+                        <ArchiveManager onClose={this.toggleArchiveManager} />
+                    )}
+                </>
+            )}
 
             <Label>{intl.get("app.fetchInterval")}</Label>
             <Stack horizontal>
@@ -219,6 +349,13 @@ class AppTab extends React.Component<AppTabProps, AppTabState> {
                     />
                 </Stack.Item>
             </Stack>
+
+            <ChoiceGroup
+                label={intl.get("app.openTarget")}
+                options={this.openTargetChoices()}
+                onChange={this.onOpenTargetChange}
+                selectedKey={String(this.state.openTarget)}
+            />
 
             <Stack horizontal verticalAlign="baseline">
                 <Stack.Item grow>

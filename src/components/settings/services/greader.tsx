@@ -112,7 +112,7 @@ class GReaderConfigsTab extends React.Component<
             this.props.blockActions()
             window.utils.showErrorBox(
                 intl.get("service.failure"),
-                intl.get("service.failureHint")
+                intl.get("service.failureHint"),
             )
         }
     }

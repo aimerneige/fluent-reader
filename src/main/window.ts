@@ -48,8 +48,8 @@ export class WindowManager {
                     process.platform === "darwin"
                         ? "#00000000"
                         : nativeTheme.shouldUseDarkColors
-                        ? "#282828"
-                        : "#faf9f8",
+                          ? "#282828"
+                          : "#faf9f8",
                 vibrancy: "sidebar",
                 x: this.mainWindowState.x,
                 y: this.mainWindowState.y,
@@ -67,7 +67,7 @@ export class WindowManager {
                     spellcheck: false,
                     preload: path.join(
                         app.getAppPath(),
-                        (app.isPackaged ? "dist/" : "") + "preload.js"
+                        (app.isPackaged ? "dist/" : "") + "preload.js",
                     ),
                 },
             })
@@ -78,7 +78,7 @@ export class WindowManager {
                 if (!app.isPackaged) this.mainWindow.webContents.openDevTools()
             })
             this.mainWindow.loadFile(
-                (app.isPackaged ? "dist/" : "") + "index.html"
+                (app.isPackaged ? "dist/" : "") + "index.html",
             )
 
             this.mainWindow.on("maximize", () => {
@@ -104,7 +104,7 @@ export class WindowManager {
                     this.mainWindow.webContents.send(
                         "window-context-menu",
                         [params.x, params.y],
-                        params.selectionText
+                        params.selectionText,
                     )
                 }
             })

@@ -91,7 +91,7 @@ export async function exportAll() {
     const filters = [{ name: intl.get("app.frData"), extensions: ["frdata"] }]
     const write = await window.utils.showSaveDialog(
         filters,
-        "*/Fluent_Reader_Backup.frdata"
+        "*/Fluent_Reader_Backup.frdata",
     )
     if (write) {
         let output = window.settings.getAll()
@@ -113,7 +113,7 @@ export async function importAll() {
         intl.get("confirm"),
         intl.get("cancel"),
         true,
-        "warning"
+        "warning",
     )
     if (!confirmed) return true
     let configs = JSON.parse(data)
@@ -135,7 +135,7 @@ export async function importAll() {
                     new Promise<void>((resolve, reject) => {
                         req.onsuccess = () => resolve()
                         req.onerror = () => reject()
-                    })
+                    }),
             )
             Promise.all(promises).then(() => {
                 delete configs.nedb

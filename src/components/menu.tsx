@@ -23,7 +23,7 @@ export type MenuProps = {
     updateGroupExpansion: (
         event: React.MouseEvent<HTMLElement>,
         key: string,
-        selected: string
+        selected: string,
     ) => void
     toggleSearch: () => void
 }
@@ -51,7 +51,7 @@ export class Menu extends React.Component<MenuProps> {
                             Object.values(this.props.sources)
                                 .filter(s => !s.hidden)
                                 .map(s => s.unreadCount)
-                                .reduce((a, b) => a + b, 0)
+                                .reduce((a, b) => a + b, 0),
                         ),
                     key: ALL,
                     icon: "TextDocument",
@@ -75,7 +75,7 @@ export class Menu extends React.Component<MenuProps> {
                                 this.countOverflow(
                                     sources
                                         .map(s => s.unreadCount)
-                                        .reduce((a, b) => a + b, 0)
+                                        .reduce((a, b) => a + b, 0),
                                 ),
                             key: "g-" + g.index,
                             url: null,
@@ -128,7 +128,8 @@ export class Menu extends React.Component<MenuProps> {
                 className="link-stack"
                 horizontal
                 grow
-                onContextMenu={event => this.onContext(link, event)}>
+                onContextMenu={event => this.onContext(link, event)}
+            >
                 <div className="link-text">{link.name}</div>
                 {count && count !== "0" && (
                     <div className="unread-count">{count}</div>
@@ -152,23 +153,27 @@ export class Menu extends React.Component<MenuProps> {
                     className={
                         "menu-container" + (this.props.display ? " show" : "")
                     }
-                    onClick={this.props.toggleMenu}>
+                    onClick={this.props.toggleMenu}
+                >
                     <div
                         className={
                             "menu" + (this.props.itemOn ? " item-on" : "")
                         }
-                        onClick={e => e.stopPropagation()}>
+                        onClick={e => e.stopPropagation()}
+                    >
                         <div className="btn-group">
                             <a
                                 className="btn hide-wide"
                                 title={intl.get("menu.close")}
-                                onClick={this.props.toggleMenu}>
+                                onClick={this.props.toggleMenu}
+                            >
                                 <Icon iconName="Back" />
                             </a>
                             <a
                                 className="btn inline-block-wide"
                                 title={intl.get("menu.close")}
-                                onClick={this.props.toggleMenu}>
+                                onClick={this.props.toggleMenu}
+                            >
                                 <Icon
                                     iconName={
                                         window.utils.platform === "darwin"
@@ -181,7 +186,8 @@ export class Menu extends React.Component<MenuProps> {
                         <FocusZone
                             as="div"
                             disabled={!this.props.display}
-                            className="nav-wrapper">
+                            className="nav-wrapper"
+                        >
                             <Nav
                                 onRenderGroupHeader={this._onRenderGroupHeader}
                                 onRenderLink={this._onRenderLink}
@@ -191,7 +197,7 @@ export class Menu extends React.Component<MenuProps> {
                                     this.props.updateGroupExpansion(
                                         event,
                                         item.key,
-                                        this.props.selected
+                                        this.props.selected,
                                     )
                                 }
                             />

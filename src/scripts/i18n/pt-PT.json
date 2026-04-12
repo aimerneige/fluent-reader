@@ -237,5 +237,32 @@
         "pacHint": "Para proxies Socks, é recomendado para o PAC retornar \"SOCKS5\" para o proxy-side DNS. Desligar o proxy requer um reinicio.",
         "fetchInterval": "Intervalo de atualização automática",
         "never": "Nunca"
+    },
+    "ai": {
+        "name": "AI Assistant",
+        "provider": "Provider",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "model": "Model",
+        "prompts": "Preset Prompts",
+        "promptName": "Prompt name",
+        "promptContent": "Prompt content",
+        "addPrompt": "Add",
+        "deletePrompt": "Delete",
+        "askAI": "Ask AI",
+        "send": "Send",
+        "stop": "Stop",
+        "thinking": "Thinking...",
+        "error": "Error",
+        "noConfig": "AI is not configured. Please go to Settings to set up your AI provider.",
+        "inputPlaceholder": "Ask a question about this article...",
+        "clearHistory": "Clear history",
+        "confirmClearHistory": "Clear chat history?",
+        "confirmClearHistorySubtitle": "This will remove all chat messages for this article.",
+        "copyMessage": "Copy",
+        "copied": "Copied"
     }
 }

@@ -14,13 +14,14 @@ import {
     openMarkAllMenu,
 } from "../scripts/models/app"
 import { toggleSearch } from "../scripts/models/page"
-import { ViewType , WindowStateListenerType } from "../schema-types"
+import { ViewType, WindowStateListenerType } from "../schema-types"
 
 const Nav: React.FC = () => {
     const dispatch = useDispatch()
     const state = useSelector((state: RootState) => state.app)
     const itemShown = useSelector(
-        (state: RootState) => state.page.itemId && state.page.viewType !== ViewType.List
+        (state: RootState) =>
+            state.page.itemId && state.page.viewType !== ViewType.List,
     )
     const [maximized, setMaximized] = useState(window.utils.isMaximized())
 
@@ -48,7 +49,7 @@ const Nav: React.FC = () => {
                     break
             }
         },
-        [setBodyFocusState, setBodyFullscreenState]
+        [setBodyFocusState, setBodyFullscreenState],
     )
 
     const canFetch = useCallback(
@@ -57,7 +58,7 @@ const Nav: React.FC = () => {
             state.feedInit &&
             !state.syncing &&
             !state.fetchingItems,
-        [state.sourceInit, state.feedInit, state.syncing, state.fetchingItems]
+        [state.sourceInit, state.feedInit, state.syncing, state.fetchingItems],
     )
 
     const fetch = useCallback(() => {
@@ -103,7 +104,17 @@ const Nav: React.FC = () => {
                 }
             }
         },
-        [state.settings.display, itemShown, menu, search, fetch, markAll, logs, views, settings]
+        [
+            state.settings.display,
+            itemShown,
+            menu,
+            search,
+            fetch,
+            markAll,
+            logs,
+            views,
+            settings,
+        ],
     )
 
     useEffect(() => {
@@ -161,7 +172,8 @@ const Nav: React.FC = () => {
                 <a
                     className="btn hide-wide"
                     title={intl.get("nav.menu")}
-                    onClick={menu}>
+                    onClick={menu}
+                >
                     <Icon
                         iconName={
                             window.utils.platform === "darwin"
@@ -176,7 +188,8 @@ const Nav: React.FC = () => {
                 <a
                     className={"btn" + fetching()}
                     onClick={fetch}
-                    title={intl.get("nav.refresh")}>
+                    title={intl.get("nav.refresh")}
+                >
                     <Icon iconName="Refresh" />
                 </a>
                 <a
@@ -185,19 +198,18 @@ const Nav: React.FC = () => {
                     onClick={markAll}
                     title={intl.get("nav.markAllRead")}
                     onMouseDown={e => {
-                        if (
-                            state.contextMenu.event ===
-                            "#mark-all-toggle"
-                        )
+                        if (state.contextMenu.event === "#mark-all-toggle")
                             e.stopPropagation()
-                    }}>
+                    }}
+                >
                     <Icon iconName="InboxCheck" />
                 </a>
                 <a
                     className="btn"
                     id="log-toggle"
                     title={intl.get("nav.notifications")}
-                    onClick={logs}>
+                    onClick={logs}
+                >
                     {state.logMenu.notify ? (
                         <Icon iconName="RingerSolid" />
                     ) : (
@@ -210,18 +222,17 @@ const Nav: React.FC = () => {
                     title={intl.get("nav.view")}
                     onClick={views}
                     onMouseDown={e => {
-                        if (
-                            state.contextMenu.event ===
-                            "#view-toggle"
-                        )
+                        if (state.contextMenu.event === "#view-toggle")
                             e.stopPropagation()
-                    }}>
+                    }}
+                >
                     <Icon iconName="View" />
                 </a>
                 <a
                     className="btn"
                     title={intl.get("nav.settings")}
-                    onClick={settings}>
+                    onClick={settings}
+                >
                     <Icon iconName="Settings" />
                 </a>
                 <span className="seperator"></span>
@@ -229,29 +240,29 @@ const Nav: React.FC = () => {
                     className="btn system"
                     title={intl.get("nav.minimize")}
                     onClick={minimize}
-                    style={{ fontSize: 12 }}>
+                    style={{ fontSize: 12 }}
+                >
                     <Icon iconName="Remove" />
                 </a>
                 <a
                     className="btn system"
                     title={intl.get("nav.maximize")}
-                    onClick={maximize}>
+                    onClick={maximize}
+                >
                     {maximized ? (
                         <Icon
                             iconName="ChromeRestore"
                             style={{ fontSize: 11 }}
                         />
                     ) : (
-                        <Icon
-                            iconName="Checkbox"
-                            style={{ fontSize: 10 }}
-                        />
+                        <Icon iconName="Checkbox" style={{ fontSize: 10 }} />
                     )}
                 </a>
                 <a
                     className="btn system close"
                     title={intl.get("close")}
-                    onClick={close}>
+                    onClick={close}
+                >
                     <Icon iconName="Cancel" />
                 </a>
             </div>

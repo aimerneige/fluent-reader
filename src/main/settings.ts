@@ -8,6 +8,7 @@ import {
     SyncService,
     ServiceConfigs,
     ViewConfigs,
+    AIConfig,
 } from "../schema-types"
 import { ipcMain, session, nativeTheme, app } from "electron"
 import { WindowManager } from "./window"
@@ -69,7 +70,7 @@ ipcMain.handle("set-proxy", (_, address = null) => {
 
 const VIEW_STORE_KEY = "view"
 ipcMain.on("get-view", event => {
-    event.returnValue = store.get(VIEW_STORE_KEY, ViewType.Cards)
+    event.returnValue = store.get(VIEW_STORE_KEY, ViewType.List)
 })
 ipcMain.handle("set-view", (_, viewType: ViewType) => {
     store.set(VIEW_STORE_KEY, viewType)
@@ -178,7 +179,7 @@ ipcMain.on("get-view-configs", (event, view: ViewType) => {
         case ViewType.List:
             event.returnValue = store.get(
                 LIST_CONFIGS_STORE_KEY,
-                ViewConfigs.ShowCover
+                ViewConfigs.ShowCover,
             )
             break
         default:
@@ -194,7 +195,7 @@ ipcMain.handle(
                 store.set(LIST_CONFIGS_STORE_KEY, configs)
                 break
         }
-    }
+    },
 )
 
 const NEDB_STATUS_STORE_KEY = "useNeDB"
@@ -203,4 +204,36 @@ ipcMain.on("get-nedb-status", event => {
 })
 ipcMain.handle("set-nedb-status", (_, flag: boolean) => {
     store.set(NEDB_STATUS_STORE_KEY, flag)
+})
+
+const AI_CONFIG_STORE_KEY = "aiConfig"
+ipcMain.on("get-ai-config", event => {
+    event.returnValue = store.get(AI_CONFIG_STORE_KEY, null)
+})
+ipcMain.handle("set-ai-config", (_, config: AIConfig) => {
+    store.set(AI_CONFIG_STORE_KEY, config)
+})
+
+const OPEN_TARGET_STORE_KEY = "openTarget"
+ipcMain.on("get-open-target", event => {
+    event.returnValue = store.get(OPEN_TARGET_STORE_KEY, 0)
+})
+ipcMain.handle("set-open-target", (_, target: number) => {
+    store.set(OPEN_TARGET_STORE_KEY, target)
+})
+
+const LOW_PERFORMANCE_STORE_KEY = "lowPerformance"
+ipcMain.on("get-low-performance", event => {
+    event.returnValue = store.get(LOW_PERFORMANCE_STORE_KEY, false)
+})
+ipcMain.handle("set-low-performance", (_, flag: boolean) => {
+    store.set(LOW_PERFORMANCE_STORE_KEY, flag)
+})
+
+const AGGRESSIVE_CACHE_STORE_KEY = "aggressiveCache"
+ipcMain.on("get-aggressive-cache", event => {
+    event.returnValue = store.get(AGGRESSIVE_CACHE_STORE_KEY, false)
+})
+ipcMain.handle("set-aggressive-cache", (_, flag: boolean) => {
+    store.set(AGGRESSIVE_CACHE_STORE_KEY, flag)
 })

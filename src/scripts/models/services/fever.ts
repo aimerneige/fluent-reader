@@ -32,7 +32,7 @@ async function markItem(configs: FeverConfigs, item: RSSItem, as: string) {
             await fetchAPI(
                 configs,
                 "",
-                `&mark=item&as=${as}&id=${item.serviceRef}`
+                `&mark=item&as=${as}&id=${item.serviceRef}`,
             )
         } catch (err) {
             console.log(err)
@@ -112,7 +112,7 @@ export const feverServiceHooks: ServiceHooks = {
         )
         configs.lastId = items.reduce(
             (m, n) => Math.max(m, n.id),
-            configs.lastId
+            configs.lastId,
         )
         if (items.length > 0) {
             const fidMap = new Map<string, RSSSource>()
@@ -143,7 +143,7 @@ export const feverServiceHooks: ServiceHooks = {
                 let baseEl = dom.createElement("base")
                 baseEl.setAttribute(
                     "href",
-                    item.link.split("/").slice(0, 3).join("/")
+                    item.link.split("/").slice(0, 3).join("/"),
                 )
                 dom.head.append(baseEl)
                 let img = dom.querySelector("img")
@@ -152,7 +152,7 @@ export const feverServiceHooks: ServiceHooks = {
                 } else if (configs.useInt32) {
                     // TTRSS Fever Plugin attachments
                     let a = dom.querySelector(
-                        "body>ul>li:first-child>a"
+                        "body>ul>li:first-child>a",
                     ) as HTMLAnchorElement
                     if (a && /, image\/generic$/.test(a.innerText) && a.href)
                         item.thumb = a.href
@@ -210,7 +210,7 @@ export const feverServiceHooks: ServiceHooks = {
                     fetchAPI(
                         configs,
                         "",
-                        `&mark=feed&as=read&id=${source.serviceRef}&before=${timestamp}`
+                        `&mark=feed&as=read&id=${source.serviceRef}&before=${timestamp}`,
                     )
                 }
             }

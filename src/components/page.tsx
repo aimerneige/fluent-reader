@@ -33,7 +33,8 @@ class Page extends React.Component<PageProps> {
                         key="card"
                         className={
                             "main" + (this.props.menuOn ? " menu-on" : "")
-                        }>
+                        }
+                    >
                         <ArticleSearch />
                         {this.props.feeds.map(fid => (
                             <FeedContainer
@@ -50,10 +51,12 @@ class Page extends React.Component<PageProps> {
                         ignoreExternalFocusing={true}
                         isClickableOutsideFocusTrap={true}
                         className="article-container"
-                        onClick={this.props.dismissItem}>
+                        onClick={this.props.dismissItem}
+                    >
                         <div
                             className="article-wrapper"
-                            onClick={e => e.stopPropagation()}>
+                            onClick={e => e.stopPropagation()}
+                        >
                             <ArticleContainer itemId={this.props.itemId} />
                         </div>
                         {this.props.itemFromFeed && (
@@ -80,7 +83,8 @@ class Page extends React.Component<PageProps> {
                         key="list"
                         className={
                             "list-main" + (this.props.menuOn ? " menu-on" : "")
-                        }>
+                        }
+                    >
                         <ArticleSearch />
                         <div className="list-feed-container">
                             {this.props.feeds.map(fid => (

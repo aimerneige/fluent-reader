@@ -21,6 +21,7 @@ import {
     IDragDropEvents,
     Link,
     IIconProps,
+    SearchBox,
 } from "@fluentui/react"
 import { SourceRule, RuleActions } from "../../scripts/models/rule"
 import { FilterType } from "../../scripts/models/feed"
@@ -45,6 +46,7 @@ type RulesTabProps = {
 
 type RulesTabState = {
     sid: string
+    searchQuery: string
     selectedRules: number[]
     editIndex: number
     regex: string
@@ -68,6 +70,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
         super(props)
         this.state = {
             sid: null,
+            searchQuery: "",
             selectedRules: [],
             editIndex: -1,
             regex: "",
@@ -112,7 +115,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
     reorderRules = (item: SourceRule) => {
         let rules = this.getSourceRules()
         let draggedItems = this.rulesSelection.isIndexSelected(
-            this.rulesDraggedIndex
+            this.rulesDraggedIndex,
         )
             ? (this.rulesSelection.getSelection() as SourceRule[])
             : [this.rulesDraggedItem]
@@ -170,12 +173,40 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
         this.setState({ [name]: event.target.value })
     }
 
-    sourceOptions = (): IDropdownOption[] =>
-        Object.entries(this.props.sources).map(([sid, s]) => ({
-            key: sid,
-            text: s.name,
-            data: { icon: s.iconurl },
-        }))
+    sourceOptions = (): IDropdownOption[] => {
+        const query = this.state.searchQuery.toLowerCase()
+        return Object.entries(this.props.sources)
+            .filter(([_, s]) =>
+                query
+                    ? s.name.toLowerCase().includes(query) ||
+                      s.url.toLowerCase().includes(query)
+                    : true,
+            )
+            .map(([sid, s]) => ({
+                key: sid,
+                text: s.name,
+                data: { icon: s.iconurl },
+            }))
+    }
+    onRenderSourceList = (
+        props: any,
+        defaultRender: (props: any) => JSX.Element,
+    ) => (
+        <>
+            <SearchBox
+                placeholder={intl.get("rules.search")}
+                value={this.state.searchQuery}
+                onChange={(_, v) => this.setState({ searchQuery: v || "" })}
+                styles={{
+                    root: {
+                        margin: 4,
+                    },
+                }}
+                onKeyDown={e => e.stopPropagation()}
+            />
+            {defaultRender(props)}
+        </>
+    )
     onRenderSourceOption = (option: IDropdownOption) => (
         <div>
             {option.data && option.data.icon && (
@@ -192,6 +223,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
         this.rulesSelection.setAllSelected(false)
         this.setState({
             sid: item.key as string,
+            searchQuery: "",
             selectedRules: [],
             editIndex: -1,
             mockTitle: "",
@@ -241,7 +273,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
             this.setState(prevState => {
                 let [a, f] = (item.key as string).split("-")
                 let keys = prevState.actionKeys.filter(
-                    k => !k.startsWith(`${a}-`)
+                    k => !k.startsWith(`${a}-`),
                 )
                 keys.push(item.key as string)
                 return { actionKeys: keys }
@@ -270,7 +302,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
             this.state.regex,
             this.state.actionKeys,
             filterType,
-            this.state.match
+            this.state.match,
         )
         let source = this.props.sources[parseInt(this.state.sid)]
         let rules = source.rules ? [...source.rules] : []
@@ -297,7 +329,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
         let source = this.props.sources[parseInt(this.state.sid)]
         this.props.updateSourceRules(
             source,
-            rules.filter(r => r !== null)
+            rules.filter(r => r !== null),
         )
         this.initRuleEdit()
     }
@@ -342,7 +374,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
         SourceRule.applyAll(this.getSourceRules(), item)
         let result = []
         result.push(
-            intl.get(item.hasRead ? "article.markRead" : "article.markUnread")
+            intl.get(item.hasRead ? "article.markRead" : "article.markUnread"),
         )
         if (item.starred) result.push(intl.get("article.star"))
         if (item.hidden) result.push(intl.get("article.hide"))
@@ -381,8 +413,15 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
                         options={this.sourceOptions()}
                         onRenderOption={this.onRenderSourceOption}
                         onRenderTitle={this.onRenderSourceTitle}
+                        onRenderList={this.onRenderSourceList}
                         selectedKey={this.state.sid}
                         onChange={this.onSourceOptionChange}
+                        onDismiss={() =>
+                            this.setState({ searchQuery: "" })
+                        }
+                        calloutProps={{
+                            calloutMaxHeight: 300,
+                        }}
                     />
                 </Stack.Item>
             </Stack>
@@ -398,7 +437,7 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
                                     this.state.editIndex <
                                         this.getSourceRules().length
                                     ? "edit"
-                                    : "rules.new"
+                                    : "rules.new",
                             )}
                         </Label>
                         <Stack horizontal>
@@ -483,7 +522,8 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
                         />
                         <MarqueeSelection
                             selection={this.rulesSelection}
-                            isDraggingConstrainedToRoot>
+                            isDraggingConstrainedToRoot
+                        >
                             <DetailsList
                                 compact
                                 columns={this.ruleColumns()}
@@ -544,7 +584,8 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
                     <Stack
                         className="settings-rules-icons"
                         horizontal
-                        tokens={{ childrenGap: 12 }}>
+                        tokens={{ childrenGap: 12 }}
+                    >
                         <Icon iconName="Filter" />
                         <Icon iconName="FavoriteStar" />
                         <Icon iconName="Ringer" />
@@ -555,10 +596,11 @@ class RulesTab extends React.Component<RulesTabProps, RulesTabState> {
                         <Link
                             onClick={() =>
                                 window.utils.openExternal(
-                                    "https://github.com/yang991178/fluent-reader/wiki/Support#rules"
+                                    "https://github.com/yang991178/fluent-reader/wiki/Support#rules",
                                 )
                             }
-                            style={{ marginLeft: 6 }}>
+                            style={{ marginLeft: 6 }}
+                        >
                             {intl.get("rules.help")}
                         </Link>
                     </span>

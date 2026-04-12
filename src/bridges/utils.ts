@@ -27,7 +27,7 @@ const utilsBridge = {
         confirm: string,
         cancel: string,
         defaultCancel = false,
-        type = "none"
+        type = "none",
     ) => {
         return (await ipcRenderer.invoke(
             "show-message-box",
@@ -36,7 +36,7 @@ const utilsBridge = {
             confirm,
             cancel,
             defaultCancel,
-            type
+            type,
         )) as boolean
     },
 
@@ -44,7 +44,7 @@ const utilsBridge = {
         let result = (await ipcRenderer.invoke(
             "show-save-dialog",
             filters,
-            path
+            path,
         )) as boolean
         if (result) {
             return (result: string, errmsg: string) => {
@@ -68,7 +68,7 @@ const utilsBridge = {
     },
 
     addMainContextListener: (
-        callback: (pos: [number, number], text: string) => any
+        callback: (pos: [number, number], text: string) => any,
     ) => {
         ipcRenderer.removeAllListeners("window-context-menu")
         ipcRenderer.on("window-context-menu", (_, pos, text) => {
@@ -76,7 +76,7 @@ const utilsBridge = {
         })
     },
     addWebviewContextListener: (
-        callback: (pos: [number, number], text: string, url: string) => any
+        callback: (pos: [number, number], text: string, url: string) => any,
     ) => {
         ipcRenderer.removeAllListeners("webview-context-menu")
         ipcRenderer.on("webview-context-menu", (_, pos, text, url) => {
@@ -130,7 +130,7 @@ const utilsBridge = {
         ipcRenderer.invoke("request-attention")
     },
     addWindowStateListener: (
-        callback: (type: WindowStateListenerType, state: boolean) => any
+        callback: (type: WindowStateListenerType, state: boolean) => any,
     ) => {
         ipcRenderer.removeAllListeners("maximized")
         ipcRenderer.on("maximized", () => {
@@ -173,6 +173,54 @@ const utilsBridge = {
 
     initFontList: (): Promise<Array<string>> => {
         return ipcRenderer.invoke("init-font-list")
+    },
+
+    cacheArticles: async (items: any[]): Promise<any> => {
+        return await ipcRenderer.invoke("cache-articles", items)
+    },
+
+    getCachedContent: async (
+        itemId: number,
+        originalContent: string,
+    ): Promise<{ content: string; fromCache: boolean }> => {
+        return await ipcRenderer.invoke(
+            "get-cached-content",
+            itemId,
+            originalContent,
+        )
+    },
+
+    getCachedFullContent: async (
+        itemId: number,
+    ): Promise<{ content: string; fromCache: boolean } | null> => {
+        return await ipcRenderer.invoke("get-cached-full-content", itemId)
+    },
+
+    checkContentChanges: async (items: any[]): Promise<any[]> => {
+        return await ipcRenderer.invoke("check-content-changes", items)
+    },
+
+    getArchiveList: async (): Promise<any[]> => {
+        return await ipcRenderer.invoke("get-archive-list")
+    },
+
+    deleteArchive: async (timestamp: string): Promise<boolean> => {
+        return await ipcRenderer.invoke("delete-archive", timestamp)
+    },
+
+    exportArchive: async (
+        timestamp: string,
+        filePath: string,
+    ): Promise<boolean> => {
+        return await ipcRenderer.invoke("export-archive", timestamp, filePath)
+    },
+
+    getArticleCacheSize: async (): Promise<number> => {
+        return await ipcRenderer.invoke("get-article-cache-size")
+    },
+
+    clearArticleCache: async (): Promise<void> => {
+        return await ipcRenderer.invoke("clear-article-cache")
     },
 }
 

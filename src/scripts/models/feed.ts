@@ -63,8 +63,8 @@ export class FeedFilter {
                 predicates.push(
                     lf.op.or(
                         db.items.title.match(regex),
-                        db.items.snippet.match(regex)
-                    )
+                        db.items.snippet.match(regex),
+                    ),
                 )
             } else {
                 predicates.push(db.items.title.match(regex))
@@ -209,7 +209,7 @@ export function initFeedsSuccess(): FeedActionTypes {
 
 export function initFeedSuccess(
     feed: RSSFeed,
-    items: RSSItem[]
+    items: RSSItem[],
 ): FeedActionTypes {
     return {
         type: INIT_FEED,
@@ -260,7 +260,7 @@ export function loadMoreRequest(feed: RSSFeed): FeedActionTypes {
 
 export function loadMoreSuccess(
     feed: RSSFeed,
-    items: RSSItem[]
+    items: RSSItem[],
 ): FeedActionTypes {
     return {
         type: LOAD_MORE,
@@ -285,7 +285,7 @@ export function loadMore(feed: RSSFeed): AppThunk<Promise<void>> {
             dispatch(loadMoreRequest(feed))
             const state = getState()
             const skipNum = feed.iids.filter(i =>
-                FeedFilter.testItem(feed.filter, state.items[i])
+                FeedFilter.testItem(feed.filter, state.items[i]),
             ).length
             return RSSFeed.loadFeed(feed, skipNum)
                 .then(items => {
@@ -308,7 +308,7 @@ export function feedReducer(
         | SourceActionTypes
         | ItemActionTypes
         | FeedActionTypes
-        | PageActionTypes
+        | PageActionTypes,
 ): FeedState {
     switch (action.type) {
         case INIT_SOURCES:
@@ -320,7 +320,7 @@ export function feedReducer(
                             ALL,
                             Object.values(action.sources)
                                 .filter(s => !s.hidden)
-                                .map(s => s.sid)
+                                .map(s => s.sid),
                         ),
                     }
                 default:
@@ -335,7 +335,7 @@ export function feedReducer(
                         [ALL]: new RSSFeed(
                             ALL,
                             [...state[ALL].sids, action.source.sid],
-                            state[ALL].filter
+                            state[ALL].filter,
                         ),
                     }
                 default:
@@ -348,7 +348,7 @@ export function feedReducer(
                 nextState[id] = new RSSFeed(
                     id,
                     feed.sids.filter(sid => sid != action.source.sid),
-                    feed.filter
+                    feed.filter,
                 )
             }
             return nextState
@@ -372,17 +372,17 @@ export function feedReducer(
                             let items = action.items.filter(
                                 i =>
                                     feed.sids.includes(i.source) &&
-                                    FeedFilter.testItem(feed.filter, i)
+                                    FeedFilter.testItem(feed.filter, i),
                             )
                             if (items.length > 0) {
                                 let oldItems = feed.iids.map(
-                                    id => action.itemState[id]
+                                    id => action.itemState[id],
                                 )
                                 let nextItems = mergeSortedArrays(
                                     oldItems,
                                     items,
                                     (a, b) =>
-                                        b.date.getTime() - a.date.getTime()
+                                        b.date.getTime() - a.date.getTime(),
                                 )
                                 nextState[feed._id] = {
                                     ...feed,
@@ -457,7 +457,7 @@ export function feedReducer(
             let nextItem = applyItemReduction(action.item, action.type)
             let filteredFeeds = Object.values(state).filter(
                 feed =>
-                    feed.loaded && !FeedFilter.testItem(feed.filter, nextItem)
+                    feed.loaded && !FeedFilter.testItem(feed.filter, nextItem),
             )
             if (filteredFeeds.length > 0) {
                 let nextState = { ...state }
@@ -480,7 +480,7 @@ export function feedReducer(
                         [SOURCE]: new RSSFeed(
                             SOURCE,
                             action.sids,
-                            action.filter
+                            action.filter,
                         ),
                     }
                 case PageType.AllArticles:

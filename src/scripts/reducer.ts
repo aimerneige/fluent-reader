@@ -28,7 +28,7 @@ export const rootReducer = combineReducers({
 
 export const rootStore = createStore(
     rootReducer,
-    applyMiddleware<AppDispatch, RootState>(thunkMiddleware)
+    applyMiddleware<AppDispatch, RootState>(thunkMiddleware),
 )
 
 export type AppStore = typeof rootStore

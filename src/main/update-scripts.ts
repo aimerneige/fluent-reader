@@ -12,7 +12,7 @@ export default function performUpdate(store: Store<SchemaTypes>) {
             const revs = version.split(".").map(s => parseInt(s))
             store.set(
                 "useNeDB",
-                (revs[0] === 0 && revs[1] < 8) || !app.isPackaged
+                (revs[0] === 0 && revs[1] < 8) || !app.isPackaged,
             )
         } else {
             store.set("useNeDB", false)

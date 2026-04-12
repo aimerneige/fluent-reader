@@ -4,7 +4,7 @@ import { BrowserWindow, TouchBar } from "electron"
 function createTouchBarFunctionButton(
     window: BrowserWindow,
     text: string,
-    key: string
+    key: string,
 ) {
     return new TouchBar.TouchBarButton({
         label: text,

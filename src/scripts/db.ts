@@ -4,7 +4,7 @@ import lf from "lovefield"
 import { RSSSource } from "./models/source"
 import { RSSItem } from "./models/item"
 
-const sdbSchema = lf.schema.create("sourcesDB", 3)
+const sdbSchema = lf.schema.create("sourcesDB", 4)
 sdbSchema
     .createTable("sources")
     .addColumn("sid", lf.Type.INTEGER)
@@ -19,6 +19,7 @@ sdbSchema
     .addColumn("rules", lf.Type.OBJECT)
     .addColumn("textDir", lf.Type.NUMBER)
     .addColumn("hidden", lf.Type.BOOLEAN)
+    .addColumn("themeOverride", lf.Type.NUMBER)
     .addNullable(["iconurl", "serviceRef", "rules"])
     .addIndex("idxURL", ["url"], true)
 
@@ -57,6 +58,9 @@ async function onUpgradeSourceDB(rawDb: lf.raw.BackStore) {
     }
     if (version < 3) {
         await rawDb.addTableColumn("sources", "hidden", false)
+    }
+    if (version < 4) {
+        await rawDb.addTableColumn("sources", "themeOverride", 0)
     }
 }
 
@@ -104,6 +108,7 @@ async function migrateNeDB() {
             if (!doc.fetchFrequency) doc.fetchFrequency = 0
             doc.textDir = 0
             doc.hidden = false
+            doc.themeOverride = 0
             return sources.createRow(doc)
         })
         const iRows = itemDocs.map(doc => {
@@ -132,7 +137,7 @@ async function migrateNeDB() {
     } catch (err) {
         window.utils.showErrorBox(
             "An error has occured during update. Please report this error on GitHub.",
-            String(err)
+            String(err),
         )
         window.utils.closeWindow()
     }

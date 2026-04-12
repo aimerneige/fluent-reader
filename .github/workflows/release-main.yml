@@ -6,72 +6,112 @@ on:
             - "v*"
 
 jobs:
-    release:
-        runs-on: windows-latest
+    build:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: windows-latest
+                      platform: --win
+                      arch: --x64
+                      label: win-x64
+                    - os: windows-latest
+                      platform: --win
+                      arch: --arm64
+                      label: win-arm64
+                    - os: ubuntu-latest
+                      platform: --linux
+                      arch: --x64
+                      label: linux-x64
+                    - os: ubuntu-latest
+                      platform: --linux
+                      arch: --arm64
+                      label: linux-arm64
+                    - os: macos-latest
+                      platform: --mac
+                      arch: --x64
+                      label: mac-x64
+                    - os: macos-latest
+                      platform: --mac
+                      arch: --arm64
+                      label: mac-arm64
+
+        runs-on: ${{ matrix.os }}
+        name: Build (${{ matrix.label }})
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-            - name: Build and package the app
-              run: |
-                  npm install
-                  npm run build
-                  npm run package-win-ci
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Build app
+              run: npm run build
+
+            - name: Install rpm (Linux only)
+              if: runner.os == 'Linux'
+              run: sudo apt-get update && sudo apt-get install -y rpm
+
+            - name: Package with electron-builder
+              run: npx electron-builder ${{ matrix.platform }} ${{ matrix.arch }} -p never
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: artifacts-${{ matrix.label }}
+                  path: |
+                      bin/**/*.exe
+                      bin/**/*.zip
+                      bin/**/*.AppImage
+                      bin/**/*.deb
+                      bin/**/*.rpm
+                      bin/**/*.dmg
+                  if-no-files-found: error
+
+    release:
+        needs: build
+        runs-on: ubuntu-latest
+        name: Create Draft Release
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
             - name: Get app version
               id: package-version
               run: |
-                  PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')
-                  echo ::set-output name=current-version::$PACKAGE_VERSION
-              shell: bash
+                  PACKAGE_VERSION=$(node -p "require('./package.json').version")
+                  echo "current-version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
-            - name: Create release
-              id: create_release
-              uses: actions/create-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
               with:
-                  tag_name: ${{ github.ref }}
-                  release_name: Fluent Reader v${{ steps.package-version.outputs.current-version }}
+                  path: all-artifacts
+                  merge-multiple: true
+
+            - name: List artifacts
+              run: find all-artifacts -type f | sort
+
+            - name: Create draft release
+              uses: softprops/action-gh-release@v2
+              with:
+                  name: Fluent Reader v${{ steps.package-version.outputs.current-version }}
                   draft: true
                   prerelease: false
-
-            - name: Upload x64 exe to release assets
-              uses: actions/upload-release-asset@v1
+                  files: |
+                      all-artifacts/**/*.exe
+                      all-artifacts/**/*.zip
+                      all-artifacts/**/*.AppImage
+                      all-artifacts/**/*.deb
+                      all-artifacts/**/*.rpm
+                      all-artifacts/**/*.dmg
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./bin/win32/x64/Fluent Reader Setup ${{ steps.package-version.outputs.current-version }}.exe
-                  asset_name: Fluent.Reader.Setup.${{ steps.package-version.outputs.current-version }}.x64.exe
-                  asset_content_type: application/vnd.microsoft.portable-executable
-
-            - name: Upload x86 exe to release assets
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./bin/win32/ia32/Fluent Reader Setup ${{ steps.package-version.outputs.current-version }}.exe
-                  asset_name: Fluent.Reader.Setup.${{ steps.package-version.outputs.current-version }}.x86.exe
-                  asset_content_type: application/vnd.microsoft.portable-executable
-
-            - name: Upload x64 zip to release assets
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./bin/win32/x64/Fluent Reader-${{ steps.package-version.outputs.current-version }}-win.zip
-                  asset_name: Fluent.Reader.Unpacked.${{ steps.package-version.outputs.current-version }}.x64.zip
-                  asset_content_type: application/zip
-
-            - name: Upload x86 zip to release assets
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url }}
-                  asset_path: ./bin/win32/ia32/Fluent Reader-${{ steps.package-version.outputs.current-version }}-ia32-win.zip
-                  asset_name: Fluent.Reader.Unpacked.${{ steps.package-version.outputs.current-version }}.x86.zip
-                  asset_content_type: application/zip

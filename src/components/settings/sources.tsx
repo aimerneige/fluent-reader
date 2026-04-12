@@ -10,6 +10,7 @@ import {
     IColumn,
     SelectionMode,
     Selection,
+    SearchBox,
     IChoiceGroupOption,
     ChoiceGroup,
     IDropdownOption,
@@ -22,6 +23,7 @@ import {
     SourceState,
     RSSSource,
     SourceOpenTarget,
+    SourceThemeOverride,
 } from "../../scripts/models/source"
 import { urlTest } from "../../scripts/utils"
 import DangerButton from "../utils/danger-button"
@@ -36,7 +38,11 @@ type SourcesTabProps = {
     updateSourceIcon: (source: RSSSource, iconUrl: string) => Promise<void>
     updateSourceOpenTarget: (
         source: RSSSource,
-        target: SourceOpenTarget
+        target: SourceOpenTarget,
+    ) => void
+    updateSourceThemeOverride: (
+        source: RSSSource,
+        override: SourceThemeOverride,
     ) => void
     updateFetchFrequency: (source: RSSSource, frequency: number) => void
     deleteSource: (source: RSSSource) => void
@@ -49,6 +55,7 @@ type SourcesTabProps = {
 type SourcesTabState = {
     [formName: string]: string
 } & {
+    searchQuery: string
     selectedSource: RSSSource
     selectedSources: RSSSource[]
 }
@@ -67,6 +74,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
         this.state = {
             newUrl: "",
             newSourceName: "",
+            searchQuery: "",
             selectedSource: null,
             selectedSources: null,
         }
@@ -161,6 +169,10 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
 
     sourceOpenTargetChoices = (): IChoiceGroupOption[] => [
         {
+            key: String(SourceOpenTarget.Default),
+            text: intl.get("default"),
+        },
+        {
             key: String(SourceOpenTarget.Local),
             text: intl.get("sources.rssText"),
         },
@@ -215,6 +227,35 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
             selectedSource: {
                 ...this.state.selectedSource,
                 openTarget: newTarget,
+            } as RSSSource,
+        })
+    }
+
+    sourceThemeOverrideChoices = (): IChoiceGroupOption[] => [
+        {
+            key: String(SourceThemeOverride.Default),
+            text: intl.get("sources.themeDefault"),
+        },
+        {
+            key: String(SourceThemeOverride.Light),
+            text: intl.get("sources.themeLight"),
+        },
+        {
+            key: String(SourceThemeOverride.Dark),
+            text: intl.get("sources.themeDark"),
+        },
+    ]
+
+    onThemeOverrideChange = (_, option: IChoiceGroupOption) => {
+        let newOverride = parseInt(option.key) as SourceThemeOverride
+        this.props.updateSourceThemeOverride(
+            this.state.selectedSource,
+            newOverride,
+        )
+        this.setState({
+            selectedSource: {
+                ...this.state.selectedSource,
+                themeOverride: newOverride,
             } as RSSSource,
         })
     }
@@ -280,9 +321,26 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                 </Stack>
             </form>
 
+            <SearchBox
+                placeholder={intl.get("sources.search")}
+                value={this.state.searchQuery}
+                onChange={(_, v) => this.setState({ searchQuery: v || "" })}
+                styles={{ root: { marginBottom: 8 } }}
+            />
+
             <DetailsList
                 compact={Object.keys(this.props.sources).length >= 10}
-                items={Object.values(this.props.sources)}
+                items={(() => {
+                    const allSources = Object.values(this.props.sources)
+                    const query = this.state.searchQuery.toLowerCase()
+                    return query
+                        ? allSources.filter(
+                              s =>
+                                  s.name.toLowerCase().includes(query) ||
+                                  s.url.toLowerCase().includes(query),
+                          )
+                        : allSources
+                })()}
                 columns={this.columns()}
                 getKey={s => s.sid}
                 setKey="selected"
@@ -348,7 +406,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                         }
                                         validateOnLoad={false}
                                         placeholder={intl.get(
-                                            "sources.inputUrl"
+                                            "sources.inputUrl",
                                         )}
                                         value={this.state.newSourceIcon}
                                         name="newSourceIcon"
@@ -359,7 +417,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                     <DefaultButton
                                         disabled={
                                             !urlTest(
-                                                this.state.newSourceIcon.trim()
+                                                this.state.newSourceIcon.trim(),
                                             )
                                         }
                                         onClick={this.updateSourceIcon}
@@ -381,7 +439,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                     <DefaultButton
                                         onClick={() =>
                                             window.utils.writeClipboard(
-                                                this.state.selectedSource.url
+                                                this.state.selectedSource.url,
                                             )
                                         }
                                         text={intl.get("context.copy")}
@@ -402,7 +460,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                                 .fetchFrequency
                                                 ? String(
                                                       this.state.selectedSource
-                                                          .fetchFrequency
+                                                          .fetchFrequency,
                                                   )
                                                 : "0"
                                         }
@@ -417,9 +475,17 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                         label={intl.get("sources.openTarget")}
                         options={this.sourceOpenTargetChoices()}
                         selectedKey={String(
-                            this.state.selectedSource.openTarget
+                            this.state.selectedSource.openTarget,
                         )}
                         onChange={this.onOpenTargetChange}
+                    />
+                    <ChoiceGroup
+                        label={intl.get("sources.themeOverride")}
+                        options={this.sourceThemeOverrideChoices()}
+                        selectedKey={String(
+                            this.state.selectedSource.themeOverride,
+                        )}
+                        onChange={this.onThemeOverrideChange}
                     />
                     <Stack horizontal verticalAlign="baseline">
                         <Stack.Item grow>
@@ -438,7 +504,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                 <DangerButton
                                     onClick={() =>
                                         this.props.deleteSource(
-                                            this.state.selectedSource
+                                            this.state.selectedSource,
                                         )
                                     }
                                     key={this.state.selectedSource.sid}
@@ -464,7 +530,7 @@ class SourcesTab extends React.Component<SourcesTabProps, SourcesTabState> {
                                 <DangerButton
                                     onClick={() =>
                                         this.props.deleteSources(
-                                            this.state.selectedSources
+                                            this.state.selectedSources,
                                         )
                                     }
                                     text={intl.get("sources.delete")}

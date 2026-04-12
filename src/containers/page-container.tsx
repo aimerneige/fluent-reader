@@ -22,7 +22,7 @@ const mapStateToProps = createSelector(
         itemId: page.itemId,
         itemFromFeed: page.itemFromFeed,
         viewType: page.viewType,
-    })
+    }),
 )
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({

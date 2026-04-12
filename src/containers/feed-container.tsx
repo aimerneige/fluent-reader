@@ -41,7 +41,7 @@ const makeMapStateToProps = () => {
             viewType: viewType,
             viewConfigs: viewConfigs,
             currentItem: currentItem,
-        })
+        }),
     )
 }
 const mapDispatchToProps = dispatch => {

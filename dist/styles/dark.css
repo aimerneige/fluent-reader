@@ -28,7 +28,9 @@
         box-shadow: #0006 0px 5px 15px;
     }
     .list-card:active {
-        box-shadow: #0000 0px 5px 15px, inset #0006 0px 0px 15px;
+        box-shadow:
+            #0000 0px 5px 15px,
+            inset #0006 0px 0px 15px;
     }
     .magazine-card:hover,
     .ms-Fabric--isFocusVisible .magazine-card:focus {

@@ -81,6 +81,27 @@ export interface TouchBarTexts {
     notifications: string
 }
 
+export interface AIPrompt {
+    name: string
+    content: string
+}
+
+export const enum AIProvider {
+    OpenAI,
+    Ollama,
+    DeepSeek,
+}
+
+export interface AIConfig {
+    provider: AIProvider
+    baseUrl: string
+    apiKey: string
+    model: string
+    prompts: AIPrompt[]
+    showBuiltinPrompts?: boolean
+    contentLimit?: number
+}
+
 export type SchemaTypes = {
     version: string
     theme: ThemeSettings
@@ -98,4 +119,8 @@ export type SchemaTypes = {
     filterType: number
     listViewConfigs: ViewConfigs
     useNeDB: boolean
+    aiConfig: AIConfig
+    openTarget: number
+    lowPerformance: boolean
+    aggressiveCache: boolean
 }

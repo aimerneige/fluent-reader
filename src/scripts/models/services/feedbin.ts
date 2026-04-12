@@ -22,7 +22,7 @@ async function fetchAPI(configs: FeedbinConfigs, params: string) {
     const headers = new Headers()
     headers.set(
         "Authorization",
-        "Basic " + btoa(configs.username + ":" + configs.password)
+        "Basic " + btoa(configs.username + ":" + configs.password),
     )
     return await fetch(configs.endpoint + params, { headers: headers })
 }
@@ -31,12 +31,12 @@ async function markItems(
     configs: FeedbinConfigs,
     type: string,
     method: string,
-    refs: number[]
+    refs: number[],
 ) {
     const headers = new Headers()
     headers.set(
         "Authorization",
-        "Basic " + btoa(configs.username + ":" + configs.password)
+        "Basic " + btoa(configs.username + ":" + configs.password),
     )
     headers.set("Content-Type", "application/json; charset=utf-8")
     const promises = new Array<Promise<Response>>()
@@ -52,7 +52,7 @@ async function markItems(
                 method: method,
                 headers: headers,
                 body: JSON.stringify(bodyObject),
-            })
+            }),
         )
     }
     return await Promise.all(promises)
@@ -127,14 +127,14 @@ export const feedbinServiceHooks: ServiceHooks = {
             try {
                 const response = await fetchAPI(
                     configs,
-                    "entries.json?mode=extended&per_page=125&page=" + page
+                    "entries.json?mode=extended&per_page=125&page=" + page,
                 )
                 if (response.status !== 200) throw APIError()
                 lastFetched = await response.json()
                 items.push(
                     ...lastFetched.filter(
-                        i => i.id > configs.lastId && i.id < min
-                    )
+                        i => i.id > configs.lastId && i.id < min,
+                    ),
                 )
                 min = lastFetched.reduce((m, n) => Math.min(m, n.id), min)
                 page += 1
@@ -149,7 +149,7 @@ export const feedbinServiceHooks: ServiceHooks = {
         )
         configs.lastId = items.reduce(
             (m, n) => Math.max(m, n.id),
-            configs.lastId
+            configs.lastId,
         )
         if (items.length > 0) {
             const fidMap = new Map<string, RSSSource>()
@@ -192,7 +192,7 @@ export const feedbinServiceHooks: ServiceHooks = {
                     let baseEl = dom.createElement("base")
                     baseEl.setAttribute(
                         "href",
-                        item.link.split("/").slice(0, 3).join("/")
+                        item.link.split("/").slice(0, 3).join("/"),
                     )
                     dom.head.append(baseEl)
                     let img = dom.querySelector("img")
@@ -205,14 +205,14 @@ export const feedbinServiceHooks: ServiceHooks = {
                         configs,
                         "unread",
                         item.hasRead ? "DELETE" : "POST",
-                        [i.id]
+                        [i.id],
                     )
                 if (starred.has(i.id) !== Boolean(item.starred))
                     markItems(
                         configs,
                         "starred",
                         item.starred ? "POST" : "DELETE",
-                        [i.id]
+                        [i.id],
                     )
                 parsedItems.push(item)
             })
@@ -232,7 +232,7 @@ export const feedbinServiceHooks: ServiceHooks = {
         ]
         if (date) {
             predicates.push(
-                before ? db.items.date.lte(date) : db.items.date.gte(date)
+                before ? db.items.date.lte(date) : db.items.date.gte(date),
             )
         }
         const query = lf.op.and.apply(null, predicates)
@@ -250,7 +250,7 @@ export const feedbinServiceHooks: ServiceHooks = {
             getState().service as FeedbinConfigs,
             "unread",
             "DELETE",
-            [parseInt(item.serviceRef)]
+            [parseInt(item.serviceRef)],
         )
     },
 
@@ -259,7 +259,7 @@ export const feedbinServiceHooks: ServiceHooks = {
             getState().service as FeedbinConfigs,
             "unread",
             "POST",
-            [parseInt(item.serviceRef)]
+            [parseInt(item.serviceRef)],
         )
     },
 
@@ -268,7 +268,7 @@ export const feedbinServiceHooks: ServiceHooks = {
             getState().service as FeedbinConfigs,
             "starred",
             "POST",
-            [parseInt(item.serviceRef)]
+            [parseInt(item.serviceRef)],
         )
     },
 
@@ -277,7 +277,7 @@ export const feedbinServiceHooks: ServiceHooks = {
             getState().service as FeedbinConfigs,
             "starred",
             "DELETE",
-            [parseInt(item.serviceRef)]
+            [parseInt(item.serviceRef)],
         )
     },
 }

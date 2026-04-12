@@ -22,16 +22,43 @@ import { SourceRule } from "./rule"
 import { fixBrokenGroups } from "./group"
 
 export const enum SourceOpenTarget {
+    Default = -1,
     Local,
     Webpage,
     External,
     FullContent,
 }
 
+let _cachedDefaultOpenTarget: SourceOpenTarget | null = null
+
+export function getDefaultOpenTargetCached(): SourceOpenTarget {
+    if (_cachedDefaultOpenTarget === null) {
+        _cachedDefaultOpenTarget = window.settings.getDefaultOpenTarget()
+    }
+    return _cachedDefaultOpenTarget
+}
+
+export function setDefaultOpenTargetCached(target: SourceOpenTarget) {
+    _cachedDefaultOpenTarget = target
+}
+
+export function resolveOpenTarget(source: RSSSource): SourceOpenTarget {
+    if (source.openTarget !== SourceOpenTarget.Default) {
+        return source.openTarget
+    }
+    return getDefaultOpenTargetCached()
+}
+
 export const enum SourceTextDirection {
     LTR,
     RTL,
     Vertical,
+}
+
+export const enum SourceThemeOverride {
+    Default, // 0 - Follow system theme
+    Light, // 1 - Force light
+    Dark, // 2 - Force dark
 }
 
 export class RSSSource {
@@ -47,15 +74,17 @@ export class RSSSource {
     rules?: SourceRule[]
     textDir: SourceTextDirection
     hidden: boolean
+    themeOverride: SourceThemeOverride
 
     constructor(url: string, name: string = null) {
         this.url = url
         this.name = name
-        this.openTarget = SourceOpenTarget.Local
+        this.openTarget = SourceOpenTarget.Default
         this.lastFetched = new Date()
         this.fetchFrequency = 0
         this.textDir = SourceTextDirection.LTR
         this.hidden = false
+        this.themeOverride = SourceThemeOverride.Default
     }
 
     static async fetchMetaData(source: RSSSource) {
@@ -69,7 +98,7 @@ export class RSSSource {
 
     private static async checkItem(
         source: RSSSource,
-        item: MyParserItem
+        item: MyParserItem,
     ): Promise<RSSItem> {
         let i = new RSSItem(item, source)
         const items = (await db.itemsDB
@@ -79,8 +108,8 @@ export class RSSSource {
                 lf.op.and(
                     db.items.source.eq(i.source),
                     db.items.title.eq(i.title),
-                    db.items.date.eq(i.date)
-                )
+                    db.items.date.eq(i.date),
+                ),
             )
             .limit(1)
             .exec()) as RSSItem[]
@@ -89,13 +118,49 @@ export class RSSSource {
             if (source.rules) SourceRule.applyAll(source.rules, i)
             return i
         } else {
+            // Aggressive cache: check for content changes on existing items
+            try {
+                if (window.settings.getAggressiveCache()) {
+                    RSSItem.parseContent(i, item)
+                    const existingItem = items[0]
+                    if (
+                        existingItem.content !== i.content &&
+                        i.content &&
+                        i.content.length > 0
+                    ) {
+                        // Content changed — notify via IPC
+                        const sourceName = source.name || ""
+                        window.utils
+                            .checkContentChanges([
+                                {
+                                    _id: existingItem._id,
+                                    content: i.content,
+                                    oldContent: existingItem.content,
+                                    title: existingItem.title,
+                                    sourceName: sourceName,
+                                },
+                            ])
+                            .catch(e =>
+                                console.error("Content change check error:", e),
+                            )
+                        // Update the existing item's content in the database
+                        await db.itemsDB
+                            .update(db.items)
+                            .where(db.items._id.eq(existingItem._id))
+                            .set(db.items.content, i.content)
+                            .exec()
+                    }
+                }
+            } catch (e) {
+                console.error("Aggressive cache checkItem error:", e)
+            }
             return null
         }
     }
 
     static checkItems(
         source: RSSSource,
-        items: MyParserItem[]
+        items: MyParserItem[],
     ): Promise<RSSItem[]> {
         return new Promise<RSSItem[]>((resolve, reject) => {
             let p = new Array<Promise<RSSItem>>()
@@ -236,6 +301,13 @@ export function initSources(): AppThunk<Promise<void>> {
             .exec()) as RSSSource[]
         const state: SourceState = {}
         for (let source of sources) {
+            if (
+                source.openTarget === undefined ||
+                source.openTarget === null ||
+                source.openTarget === SourceOpenTarget.Local
+            ) {
+                source.openTarget = SourceOpenTarget.Default
+            }
             source.unreadCount = 0
             state[source.sid] = source
         }
@@ -255,7 +327,7 @@ export function addSourceRequest(batch: boolean): SourceActionTypes {
 
 export function addSourceSuccess(
     source: RSSSource,
-    batch: boolean
+    batch: boolean,
 ): SourceActionTypes {
     return {
         type: ADD_SOURCE,
@@ -301,7 +373,7 @@ export function insertSource(source: RSSSource): AppThunk<Promise<RSSSource>> {
 export function addSource(
     url: string,
     name: string = null,
-    batch = false
+    batch = false,
 ): AppThunk<Promise<number>> {
     return async (dispatch, getState) => {
         const app = getState().app
@@ -324,7 +396,7 @@ export function addSource(
                     window.utils.showErrorBox(
                         intl.get("sources.errorAdd"),
                         String(e),
-                        intl.get("context.copy")
+                        intl.get("context.copy"),
                     )
                 }
                 throw e
@@ -364,7 +436,7 @@ export function deleteSourceDone(source: RSSSource): SourceActionTypes {
 
 export function deleteSource(
     source: RSSSource,
-    batch = false
+    batch = false,
 ): AppThunk<Promise<void>> {
     return async (dispatch, getState) => {
         if (!batch) dispatch(saveSettings())
@@ -414,7 +486,7 @@ export function toggleSourceHidden(source: RSSSource): AppThunk<Promise<void>> {
 
 export function updateFavicon(
     sids?: number[],
-    force = false
+    force = false,
 ): AppThunk<Promise<void>> {
     return async (dispatch, getState) => {
         const initSources = getState().sources
@@ -444,7 +516,7 @@ export function updateFavicon(
 
 export function sourceReducer(
     state: SourceState = {},
-    action: SourceActionTypes | ItemActionTypes
+    action: SourceActionTypes | ItemActionTypes,
 ): SourceState {
     switch (action.type) {
         case INIT_SOURCES:
@@ -485,7 +557,7 @@ export function sourceReducer(
                                 item.source,
                                 updateMap.has(item.source)
                                     ? updateMap.get(item.source) + 1
-                                    : 1
+                                    : 1,
                             )
                         }
                     }

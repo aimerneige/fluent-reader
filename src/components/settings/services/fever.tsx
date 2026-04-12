@@ -92,7 +92,7 @@ class FeverConfigsTab extends React.Component<
             } as FeverConfigs
             if (this.state.password)
                 configs.apiKey = md5(
-                    `${configs.username}:${this.state.password}`
+                    `${configs.username}:${this.state.password}`,
                 )
         } else {
             configs = {
@@ -114,7 +114,7 @@ class FeverConfigsTab extends React.Component<
             this.props.blockActions()
             window.utils.showErrorBox(
                 intl.get("service.failure"),
-                intl.get("service.failureHint")
+                intl.get("service.failureHint"),
             )
         }
     }

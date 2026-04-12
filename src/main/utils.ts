@@ -25,7 +25,7 @@ export function setUtilsListeners(manager: WindowManager) {
             if (contents.getType() === "webview")
                 openExternal(
                     details.url,
-                    details.disposition === "background-tab"
+                    details.disposition === "background-tab",
                 )
             return {
                 action: manager.hasWindow() ? "deny" : "allow",
@@ -59,7 +59,7 @@ export function setUtilsListeners(manager: WindowManager) {
                         buttons: ["OK", copy],
                         cancelId: 0,
                         defaultId: 0,
-                    }
+                    },
                 )
                 if (response.response === 1) {
                     clipboard.writeText(`${title}: ${content}`)
@@ -67,7 +67,7 @@ export function setUtilsListeners(manager: WindowManager) {
             } else {
                 dialog.showErrorBox(title, content)
             }
-        }
+        },
     )
 
     ipcMain.handle(
@@ -90,7 +90,7 @@ export function setUtilsListeners(manager: WindowManager) {
             } else {
                 return false
             }
-        }
+        },
     )
 
     ipcMain.handle(
@@ -110,13 +110,13 @@ export function setUtilsListeners(manager: WindowManager) {
                                 if (err)
                                     dialog.showErrorBox(errmsg, String(err))
                             })
-                        }
+                        },
                     )
                     return true
                 }
             }
             return false
-        }
+        },
     )
 
     ipcMain.handle(
@@ -131,7 +131,7 @@ export function setUtilsListeners(manager: WindowManager) {
                     try {
                         return await fs.promises.readFile(
                             response.filePaths[0],
-                            "utf-8"
+                            "utf-8",
                         )
                     } catch (err) {
                         console.log(err)
@@ -139,7 +139,7 @@ export function setUtilsListeners(manager: WindowManager) {
                 }
             }
             return null
-        }
+        },
     )
 
     ipcMain.handle("get-cache", async () => {
@@ -158,10 +158,10 @@ export function setUtilsListeners(manager: WindowManager) {
                     if (isMainFrame && manager.hasWindow()) {
                         manager.mainWindow.webContents.send(
                             "webview-error",
-                            desc
+                            desc,
                         )
                     }
-                }
+                },
             )
             contents.on("context-menu", (_, params) => {
                 if (
@@ -181,12 +181,12 @@ export function setUtilsListeners(manager: WindowManager) {
                                         openExternal(
                                             params.srcURL,
                                             type ===
-                                                ImageCallbackTypes.OpenExternalBg
+                                                ImageCallbackTypes.OpenExternalBg,
                                         )
                                         break
                                     case ImageCallbackTypes.SaveAs:
                                         contents.session.downloadURL(
-                                            params.srcURL
+                                            params.srcURL,
                                         )
                                         break
                                     case ImageCallbackTypes.Copy:
@@ -196,18 +196,18 @@ export function setUtilsListeners(manager: WindowManager) {
                                         clipboard.writeText(params.srcURL)
                                         break
                                 }
-                            }
+                            },
                         )
                         manager.mainWindow.webContents.send(
                             "webview-context-menu",
-                            [params.x, params.y]
+                            [params.x, params.y],
                         )
                     } else {
                         manager.mainWindow.webContents.send(
                             "webview-context-menu",
                             [params.x, params.y],
                             params.selectionText,
-                            params.linkURL
+                            params.linkURL,
                         )
                     }
                     contents
@@ -220,12 +220,12 @@ export function setUtilsListeners(manager: WindowManager) {
                         }
                         document.addEventListener("mousedown", dismiss)
                         document.addEventListener("scroll", dismiss)
-                    })`
+                    })`,
                         )
                         .then(() => {
                             if (manager.hasWindow()) {
                                 manager.mainWindow.webContents.send(
-                                    "webview-context-menu"
+                                    "webview-context-menu",
                                 )
                             }
                         })

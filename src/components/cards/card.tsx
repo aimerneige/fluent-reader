@@ -1,5 +1,9 @@
 import * as React from "react"
-import { RSSSource, SourceOpenTarget } from "../../scripts/models/source"
+import {
+    RSSSource,
+    SourceOpenTarget,
+    resolveOpenTarget,
+} from "../../scripts/models/source"
 import { RSSItem } from "../../scripts/models/item"
 import { platformCtrl } from "../../scripts/utils"
 import { FeedFilter } from "../../scripts/models/feed"
@@ -33,7 +37,7 @@ export namespace Card {
     const onClick = (props: Props, e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
-        switch (props.source.openTarget) {
+        switch (resolveOpenTarget(props.source)) {
             case SourceOpenTarget.External: {
                 openInBrowser(props, e)
                 break

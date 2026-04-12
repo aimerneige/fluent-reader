@@ -42,7 +42,7 @@ const Highlights: React.FunctionComponent<HighlightsProps> = props => {
             if (match.index != 0) {
                 const startIndex = Math.max(
                     match.index - 25,
-                    props.text.lastIndexOf(" ", Math.max(match.index - 10, 0))
+                    props.text.lastIndexOf(" ", Math.max(match.index - 10, 0)),
                 )
                 spans.push([
                     props.text.substring(Math.max(0, startIndex), match.index),
@@ -61,7 +61,7 @@ const Highlights: React.FunctionComponent<HighlightsProps> = props => {
     return (
         <>
             {spans.map(([text, flag]) =>
-                flag ? <span className="h">{text}</span> : text
+                flag ? <span className="h">{text}</span> : text,
             )}
         </>
     )

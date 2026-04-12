@@ -53,7 +53,7 @@ export class SourceRule {
         regex: string,
         actions: string[],
         filter: FilterType,
-        match: boolean
+        match: boolean,
     ) {
         this.filter = new FeedFilter(filter, regex)
         this.match = match

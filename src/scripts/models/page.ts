@@ -92,7 +92,7 @@ export function selectAllArticles(init = false): AppThunk {
 export function selectSources(
     sids: number[],
     menuKey: string,
-    title: string
+    title: string,
 ): AppThunk {
     return (dispatch, getState) => {
         if (getState().app.menuKey !== menuKey) {
@@ -165,7 +165,7 @@ export const toggleSearch = (): AppThunk => {
                 applyFilter({
                     ...state.page.filter,
                     search: "",
-                })
+                }),
             )
         }
     }
@@ -184,7 +184,8 @@ export function showOffsetItem(offset: number): AppThunk {
             let item = state.items[itemId]
             let prevs = feed.iids
                 .map(
-                    (id, index) => [state.items[id], index] as [RSSItem, number]
+                    (id, index) =>
+                        [state.items[id], index] as [RSSItem, number],
                 )
                 .filter(([i, _]) => i.date > item.date)
             if (prevs.length > 0) {
@@ -241,7 +242,7 @@ export function switchFilter(filter: FilterType): AppThunk {
                 applyFilter({
                     ...oldFilter,
                     type: newType,
-                })
+                }),
             )
         }
     }
@@ -263,7 +264,7 @@ export function performSearch(query: string): AppThunk {
                 applyFilter({
                     ...state.page.filter,
                     search: query,
-                })
+                }),
             )
         }
     }
@@ -272,7 +273,7 @@ export function performSearch(query: string): AppThunk {
 export class PageState {
     viewType = window.settings.getDefaultView()
     viewConfigs = window.settings.getViewConfigs(
-        window.settings.getDefaultView()
+        window.settings.getDefaultView(),
     )
     filter = new FeedFilter()
     feedId = ALL
@@ -283,7 +284,7 @@ export class PageState {
 
 export function pageReducer(
     state = new PageState(),
-    action: PageActionTypes | SourceActionTypes | FeedActionTypes
+    action: PageActionTypes | SourceActionTypes | FeedActionTypes,
 ): PageState {
     switch (action.type) {
         case SELECT_PAGE:

@@ -67,6 +67,8 @@ nsis:
 linux:
     target:
         - AppImage
+        - deb
+        - rpm
     icon: build/icons
     category: Utility
     desktop:

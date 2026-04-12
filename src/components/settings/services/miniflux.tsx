@@ -114,7 +114,7 @@ class MinifluxConfigsTab extends React.Component<
                     ? this.state.apiKey
                     : Buffer.from(
                           this.state.username + ":" + this.state.password,
-                          "binary"
+                          "binary",
                       ).toString("base64")
         } else {
             configs = {
@@ -125,7 +125,7 @@ class MinifluxConfigsTab extends React.Component<
                     ? this.state.apiKey
                     : Buffer.from(
                           this.state.username + ":" + this.state.password,
-                          "binary"
+                          "binary",
                       ).toString("base64"),
                 fetchLimit: this.state.fetchLimit,
             }
@@ -144,7 +144,7 @@ class MinifluxConfigsTab extends React.Component<
             this.props.blockActions()
             window.utils.showErrorBox(
                 intl.get("service.failure"),
-                intl.get("service.failureHint")
+                intl.get("service.failureHint"),
             )
         }
     }

@@ -231,5 +231,32 @@
         "pacHint": "Для проксі Socks рекомендується, щоб PAC повертав \"SOCKS5\" для DNS на стороні проксі. Для відключення проксі потрібне перезавантаження.",
         "fetchInterval": "Інтервал автоматичної вибірки",
         "never": "Ніколи"
+    },
+    "ai": {
+        "name": "AI Assistant",
+        "provider": "Provider",
+        "openai": "OpenAI",
+        "ollama": "Ollama",
+        "deepseek": "DeepSeek",
+        "baseUrl": "Base URL",
+        "apiKey": "API Key",
+        "model": "Model",
+        "prompts": "Preset Prompts",
+        "promptName": "Prompt name",
+        "promptContent": "Prompt content",
+        "addPrompt": "Add",
+        "deletePrompt": "Delete",
+        "askAI": "Ask AI",
+        "send": "Send",
+        "stop": "Stop",
+        "thinking": "Thinking...",
+        "error": "Error",
+        "noConfig": "AI is not configured. Please go to Settings to set up your AI provider.",
+        "inputPlaceholder": "Ask a question about this article...",
+        "clearHistory": "Clear history",
+        "confirmClearHistory": "Clear chat history?",
+        "confirmClearHistorySubtitle": "This will remove all chat messages for this article.",
+        "copyMessage": "Copy",
+        "copied": "Copied"
     }
 }

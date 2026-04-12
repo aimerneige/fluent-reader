@@ -5,7 +5,9 @@ import {
     SearchEngines,
     ServiceConfigs,
     ViewConfigs,
+    AIConfig,
 } from "../schema-types"
+import { SourceOpenTarget } from "../scripts/models/source"
 import { ipcRenderer } from "electron"
 
 const settingsBridge = {
@@ -122,6 +124,34 @@ const settingsBridge = {
     },
     setNeDBStatus: (flag: boolean) => {
         ipcRenderer.invoke("set-nedb-status", flag)
+    },
+
+    getAIConfig: (): AIConfig | null => {
+        return ipcRenderer.sendSync("get-ai-config")
+    },
+    setAIConfig: (config: AIConfig) => {
+        ipcRenderer.invoke("set-ai-config", config)
+    },
+
+    getDefaultOpenTarget: (): SourceOpenTarget => {
+        return ipcRenderer.sendSync("get-open-target")
+    },
+    setDefaultOpenTarget: (target: SourceOpenTarget) => {
+        ipcRenderer.invoke("set-open-target", target)
+    },
+
+    getLowPerformance: (): boolean => {
+        return ipcRenderer.sendSync("get-low-performance")
+    },
+    setLowPerformance: (flag: boolean) => {
+        ipcRenderer.invoke("set-low-performance", flag)
+    },
+
+    getAggressiveCache: (): boolean => {
+        return ipcRenderer.sendSync("get-aggressive-cache")
+    },
+    setAggressiveCache: (flag: boolean) => {
+        ipcRenderer.invoke("set-aggressive-cache", flag)
     },
 
     getAll: () => {

@@ -16,6 +16,8 @@ import {
     openTextMenu,
     closeContextMenu,
     openImageMenu,
+    clearAIRequest,
+    AIContextMode,
 } from "../scripts/models/app"
 import {
     RSSSource,
@@ -32,15 +34,17 @@ const getItem = (state: RootState, props: ArticleContainerProps) =>
 const getSource = (state: RootState, props: ArticleContainerProps) =>
     state.sources[state.items[props.itemId].source]
 const getLocale = (state: RootState) => state.app.locale
+const getAIRequest = (state: RootState) => state.app.aiRequest
 
 const makeMapStateToProps = () => {
     return createSelector(
-        [getItem, getSource, getLocale],
-        (item, source, locale) => ({
+        [getItem, getSource, getLocale, getAIRequest],
+        (item, source, locale, aiRequest) => ({
             item: item,
             source: source,
             locale: locale,
-        })
+            aiRequest: aiRequest,
+        }),
     )
 }
 
@@ -63,12 +67,13 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
         imageMenu: (position: [number, number]) =>
             dispatch(openImageMenu(position)),
         dismissContextMenu: () => dispatch(closeContextMenu()),
+        clearAIRequest: () => dispatch(clearAIRequest()),
         updateSourceTextDirection: (
             source: RSSSource,
-            direction: SourceTextDirection
+            direction: SourceTextDirection,
         ) => {
             dispatch(
-                updateSource({ ...source, textDir: direction } as RSSSource)
+                updateSource({ ...source, textDir: direction } as RSSSource),
             )
         },
     }
@@ -76,6 +81,6 @@ const mapDispatchToProps = (dispatch: AppDispatch) => {
 
 const ArticleContainer = connect(
     makeMapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(Article)
 export default ArticleContainer

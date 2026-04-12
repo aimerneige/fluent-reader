@@ -41,6 +41,6 @@ const mapDispatchToProps = (dispatch: AppDispatch) => ({
 
 const ServiceTabContainer = connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
 )(ServiceTab)
 export default ServiceTabContainer

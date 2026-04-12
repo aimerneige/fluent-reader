@@ -31,13 +31,13 @@ const mapStateToProps = createSelector(
         groups: groups.map((g, i) => ({ ...g, index: i })),
         searchOn: searchOn,
         itemOn: itemOn,
-    })
+    }),
 )
 
 const mapDispatchToProps = dispatch => ({
     toggleMenu: () => dispatch(toggleMenu()),
     allArticles: (init = false) => {
-        dispatch(selectAllArticles(init)), dispatch(initFeeds())
+        ;(dispatch(selectAllArticles(init)), dispatch(initFeeds()))
     },
     selectSourceGroup: (group: SourceGroup, menuKey: string) => {
         dispatch(selectSources(group.sids, menuKey, group.name))
@@ -53,7 +53,7 @@ const mapDispatchToProps = dispatch => ({
     updateGroupExpansion: (
         event: React.MouseEvent<HTMLElement>,
         key: string,
-        selected: string
+        selected: string,
     ) => {
         if ((event.target as HTMLElement).tagName === "I" || key === selected) {
             let [type, index] = key.split("-")

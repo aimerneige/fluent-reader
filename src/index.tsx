@@ -4,12 +4,14 @@ import { Provider } from "react-redux"
 import { initializeIcons } from "@fluentui/react/lib/Icons"
 import Root from "./components/root"
 import { applyThemeSettings } from "./scripts/settings"
+import { applyLowPerformance } from "./scripts/performance"
 import { initApp, openTextMenu } from "./scripts/models/app"
 import { rootStore } from "./scripts/reducer"
 
 window.settings.setProxy()
 
 applyThemeSettings()
+applyLowPerformance()
 initializeIcons("icons/")
 
 rootStore.dispatch(initApp())
@@ -27,5 +29,5 @@ ReactDOM.render(
     <Provider store={rootStore}>
         <Root />
     </Provider>,
-    document.getElementById("app")
+    document.getElementById("app"),
 )
